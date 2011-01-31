@@ -120,13 +120,13 @@ public class Chromosome implements Comparable<Chromosome> {
 
 	/**
 	 * Method used to mate this <code>Chromosome</code> with another.  The
-	 * resulting child <code>Chromosome</code> is returned.
+	 * resulting child <code>Chromosome</code>s are returned.
 	 * 
 	 * @param mate The <code>Chromosome</code> to mate with.
 	 * 
-	 * @return The resulting <code>Chromosome</code> child.
+	 * @return The resulting <code>Chromosome</code> children.
 	 */
-	public Chromosome mate(Chromosome mate) {
+	public Chromosome[] mate(Chromosome mate) {
 		// Convert the genes to arrays to make thing easier.
 		char[] arr1  = gene.toCharArray();
 		char[] arr2  = mate.gene.toCharArray();
@@ -134,14 +134,20 @@ public class Chromosome implements Comparable<Chromosome> {
 		// Select a random pivot point for the mating
 		int pivot    = rand.nextInt(arr1.length);
 		
-		// Provide a contianer for the child gene data
-		char[] child = new char[gene.length()];
+		// Provide a container for the child gene data
+		char[] child1 = new char[gene.length()];
+		char[] child2 = new char[gene.length()];
 		
-		// Copy the data from each gene to the resulting child.
-		System.arraycopy(arr1, 0, child, 0, pivot);
-		System.arraycopy(arr2, pivot, child, pivot, (child.length - pivot));
+		// Copy the data from each gene to the first child.
+		System.arraycopy(arr1, 0, child1, 0, pivot);
+		System.arraycopy(arr2, pivot, child1, pivot, (child1.length - pivot));
+		
+		// Repeat for the second child, but in reverse order.
+		System.arraycopy(arr2, 0, child2, 0, pivot);
+		System.arraycopy(arr1, pivot, child2, pivot, (child2.length - pivot));
 
-		return new Chromosome(String.valueOf(child)); 
+		return new Chromosome[] { new Chromosome(String.valueOf(child1)), 
+				new Chromosome(String.valueOf(child2))}; 
 	}
 	
 	/**

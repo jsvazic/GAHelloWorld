@@ -1,23 +1,44 @@
 # Genetic Algorithm Hello World!
 
-This is a simple project intended to showcase genetic algorithms using Java 
-with a well known example for all new developers; namely the classic 
-"Hello, world!" example!
+This is a simple project intended to showcase genetic algorithms with a well 
+known example for all new developers; namely the classic "Hello, world!" 
+example!
 
 ## Overview
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
 of genetic algorithms, specifically with Java.  The program itself is really 
-simple, and more complex topics like crossover selection with roulette wheel
-algorithms, etc, have not been covered (yet).  The intention is to include a
-Clojure version of the application as well.  Currently, only Java is 
-supported.
+simple, and more complex topics like crossover selection using roulette wheel
+algorithms, etc, have not been included (yet).
+
+### History
+
+I've been working with Genetic Algorithms for a little while now and I
+stubmled across a 
+[C++ implemetation](http://www.generation5.org/content/2003/gahelloworld.asp) 
+a while ago.  I decided to bring it back to life and migrate it to Java with 
+my own enhancements.  This is far from ideal code, but it was designed to be a 
+gentle introduction for newcomers to genetic algorithms.
+
+### But why the <i>net.auxesia</i> package?
+
+[Auxesia](http://www.theoi.com/Ouranios/HoraAuxesia.html) is the greek
+goddess of spring growth, so when dealing with evolutionary programming like
+genetic algorithms, the name just seemed to fit.  That and I was trying to be
+witty with my naming, and [Dalek](http://en.wikipedia.org/wiki/Dalek) just 
+didn't seem right.
 
 ## Usage
 
-The project currently uses a Maven build script.  Please feel free to use 
-that for now.
+The project currently uses [Maven](http://maven.apache.org) for the build.
+To build it locally, run the following from a shell:
+
+> mvn clean install
+
+To execute the simulation, change to the <i>target</i> directory and run:
+
+> java -jar gahelloworld-1.0-SNAPSHOT.jar
 
 ## Copyright and License
 

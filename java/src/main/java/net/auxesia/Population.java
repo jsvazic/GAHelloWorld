@@ -113,31 +113,36 @@ public class Population {
 		while (idx < buffer.length) {
 			// Check to see if we should perform a crossover. 
 			if (rand.nextFloat() <= crossover) {
+				
+				// Select the parents and mate to get their children
 				Chromosome[] parents = selectParents();
+				Chromosome[] children = parents[0].mate(parents[1]);
 				
-				// Mate the two parents one way, then the other.
-				buffer[idx] = parents[0].mate(parents[1]);
-				
-				// Check to see if the child should be mutated.
+				// Check to see if the first child should be mutated.
 				if (rand.nextFloat() <= mutation) {
-					buffer[idx] = buffer[idx].mutate();
+					buffer[idx++] = children[0].mutate();
+				} else {
+					buffer[idx++] = children[0];
 				}
-				++idx;
+				
+				// Repeat for the second child, if there is room.
 				if (idx < buffer.length) {
-					buffer[idx] = parents[1].mate(parents[0]);
 					if (rand.nextFloat() <= mutation) {
-						buffer[idx] = buffer[idx].mutate();
+						buffer[idx] = children[1].mutate();
+					} else {
+						buffer[idx] = children[1];
 					}
 				}
-			} else {
-				// No crossover, so copy verbatium.
-				buffer[idx] = popArr[idx];
-				
+			} else { // No crossover, so copy verbatium.
 				// Determine if mutation should occur.
 				if (rand.nextFloat() <= mutation) {
-					buffer[idx] = buffer[idx].mutate();
+					buffer[idx] = popArr[idx].mutate();
+				} else {
+					buffer[idx] = popArr[idx];
 				}
 			}
+			
+			// Increase our counter
 			++idx;
 		}
 
