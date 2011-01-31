@@ -3,3 +3,7 @@
 .settings
 bin/
 java/target
+clojure/pom.xml
+clojure/*jar
+clojure/lib
+clojure/classes
