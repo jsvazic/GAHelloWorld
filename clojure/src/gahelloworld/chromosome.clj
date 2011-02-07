@@ -1,36 +1,40 @@
 (ns gahelloworld.chromosome)
 
-(def *target-gene* (into [] "Hello, world!"))
+(def *target-str* (vec "Hello, world!"))
 
-(defn calc-fitness [gene]
-  (let [len (count gene)]
+(defn- fitness [str]
+  (let [len (count str)]
     (loop [fitness 0 idx 0]
 	  (if (== idx len)
 	    fitness
-	    (recur (+ fitness (Math/abs (- (int (nth gene idx))
-					   (int (nth *target-gene* idx)))))
+	    (recur (+ fitness (Math/abs (- (int (nth str idx))
+					   (int (nth *target-str* idx)))))
 		   (inc idx))))))
 
-(defn rand-char []
-  (char (+ 32 (rand 90))))
-
-(defn rand-gene [len]
-  (loop [col [] idx 0]
-    (if (== idx len)
-	  col
-	  (recur (conj col (rand-char)) (inc idx)))))
+(defn- rand-gene [len]
+  (vec (repeatedly len (fn [] (char (+ 32 (rand-int 90)))))))
 	  
-(defn mutate-gene [gene]
-  (let [idx (rand (count gene))]
-    (assoc gene idx (mod (+ (int (nth gene idx)) (rand-char)) 122))))
+(defn mutate [c]
+  (let [gene (:gene c)
+	idx (rand-int (count gene))]
+    (assoc c :gene (assoc gene idx
+			  (char (mod (+ (int (nth gene idx))
+					(+ 32 (rand-int 90)))
+				     122))))))
 
-(defn mate [gene1 gene2]
-  (let [pivot (rand (count gene1))]
+(defn mate [c1 c2]
+  (let [gene1 (:gene c1)
+	gene2 (:gene c2)
+	pivot (rand-int (count gene1))
+	child1 (into (drop pivot gene2) (reverse (take pivot gene1)))
+	child2 (into (drop pivot gene1) (reverse (take pivot gene2)))]
     (vector
-	  (into (drop pivot gene2) (reverse (take pivot gene1)))
-	  (into (drop pivot gene1) (reverse (take pivot gene2))))))
+     (hash-map :gene child1 :fitness (fitness child1))
+     (hash-map :gene child2 :fitness (fitness child2)))))
 
-(defn gen-chromosome []
-  (let [gene (rand-gene (count *target-gene*))
-	chromosome {}]
-    (assoc chromosome :gene gene :fitness (calc-fitness gene))))
+(defn generate
+  ([]
+     (let [gene (rand-gene (count *target-str*))]
+       (generate gene)))
+  ([gene]
+     (hash-map :gene gene :fitness (fitness gene))))
