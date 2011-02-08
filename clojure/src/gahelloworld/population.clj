@@ -21,12 +21,17 @@
 ;; THE SOFTWARE.
 
 (ns gahelloworld.population
+  "This namespace defines functions used to generate, interrogate,
+   and evolve a genetic algoritm population."
   (:require [gahelloworld.chromosome :as chromosome])
   (:gen-class))
 
-(def *tournament-size* 64)
+(def *tournament-size* 3)
 
-(defn generate [size crossover elitism mutation]
+(defn generate
+  "Function to generate a new population with a given size,
+   crossover rate, elitisim rate and mutation rate."
+  [size crossover elitism mutation]
   (let [chromosomes (sort-by
 		     (fn [x] (:fitness x))
 		     (vec (repeatedly size chromosome/generate)))]
@@ -35,39 +40,51 @@
 	      :mutation mutation
 	      :population chromosomes)))
 
-(defn best [p]
+(defn best
+  "Function to retrieve the best fit chromosome for
+   a population."
+  [p]
   (first (:population p)))
 
-(defn- tournament-selection [population]
-  (let [pop-size (count (:population population))]
-    (loop [best (nth (:population population) (rand-int pop-size))
+(defn- tournament-selection [seq]
+  "Function to perform a tournament selection to retrieve a random
+   chromosome from the given sequence of chromosomes."
+  (let [pop-size (count seq)]
+    (loop [best (nth seq (rand-int pop-size))
 	   i 0]
       (if (= i *tournament-size*)
 	best
-	(let [contender (nth (:population population) (rand-int pop-size))
+	(let [contender (nth seq (rand-int pop-size))
 	      new-best (if (<= (:fitness best) (:fitness contender))
 			  best
 			  contender)]
 	  (recur new-best (inc i)))))))
 
-(defn evolve [population]
+(defn evolve
+  "Function to evolve a given population.  The population carries over
+   a portion of the original population unchanged, based on the
+   :elitism ratio defined for the population.  The remainer of the
+   population is comprised of children being mated with random
+   parents (based on the :crossover ratio), or randomly selected
+   from the population.  Any non-elitist members are subject to
+   random mutation (based on the :mutation property)."
+  [population]
   (let [chromosomes (:population population)
         size (count chromosomes)
-	elitism-size (int (Math/round (* (:elitisim population) size)))
+	elitism-size (int (Math/round (* (:elitism population) size)))
 	r-mutate (fn [x] (if (<= (rand) (:mutation population))
 			   (chromosome/mutate x)
-			   x))]
+			     x))]
     (loop [buffer (take elitism-size chromosomes)
 	   idx (inc elitism-size)]
-      (if (<= size (count buffer))
+      (if (>= (count buffer) size)
 	(assoc population :population
 	       (sort-by (fn [x] (:fitness x)) (doall (take size buffer))))
 	(if (<= (rand) (:crossover population))
 	  ;; Perform a crossover
 	  (let [c1 (tournament-selection chromosomes)
-		c2 (tournament-selection chromosomes)
-		children (chromosome/mate c1 c2)]
-	    (recur (conj buffer (doall (map #(r-mutate %) children)))
+		c2 (tournament-selection chromosomes)]
+	    (recur (into buffer (map #(r-mutate %) (chromosome/mate c1 c2)))
 		   (inc (inc idx))))
 	  ;; Perform a straight copy with mutation
 	  (recur (conj buffer (r-mutate (nth chromosomes idx)))

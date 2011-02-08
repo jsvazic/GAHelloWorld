@@ -21,25 +21,29 @@
 ;; THE SOFTWARE.
 
 (ns gahelloworld.core
+  "This namespace defines the main driver for the 'Hello, world!'
+   genetic algorithm application."
   (:require [gahelloworld.population :as population]
 	    [gahelloworld.chromosome :as chromosome])
   (:gen-class))
 
-(defn -main [& args]
+(defn -main
+  "This is the main function used for command-line execution."
+  [& args]
   (let [size 2048
 	crossover-ratio 0.8
 	elitism-ratio 0.1
 	mutation-ratio 0.03
 	max-generations 16384]
     (loop [generation 0
-	   pop (population/generate size
-				    crossover-ratio
-				    elitism-ratio
-				    mutation-ratio)]
-      (let [best (population/best pop)]
+	   ga-pop (population/generate size
+				       crossover-ratio
+				       elitism-ratio
+				       mutation-ratio)]
+      (let [best (population/best ga-pop)]
 	(do
-	  (println "Generation" generation (:gene best))
+	  (println "Generation" generation (apply str (:gene best)))
 	  (cond
 	   (= 0 (:fitness best)) best
 	   (>= generation max-generations) best
-	   :default (recur (inc generation) (population/evolve pop))))))))
+	   :default (recur (inc generation) (population/evolve ga-pop))))))))
