@@ -20,10 +20,10 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(ns gahelloworld.population
+(ns net.auxesia.population
   "This namespace defines functions used to generate, interrogate,
    and evolve a genetic algoritm population."
-  (:require [gahelloworld.chromosome :as chromosome])
+  (:require [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
 (def *tournament-size* 3)

@@ -1,5 +1,5 @@
-(ns gahelloworld.test.chromosome
-  (:use [gahelloworld.chromosome] :reload)
+(ns net.auxesia.test.chromosome
+  (:use [net.auxesia.chromosome] :reload)
   (:use [clojure.test]))
 
 (deftest replace-me ;; FIXME: write

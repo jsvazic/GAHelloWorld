@@ -1,45 +1,28 @@
-# Genetic Algorithm Hello World!
+# Genetic Algorithm Hello World! (Java Edition)
 
 This is a simple project intended to showcase genetic algorithms with a well 
 known example for all new developers; namely the classic "Hello, world!" 
-example!
+example, written in Java.
 
 ## Overview
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, using both Java and Clojure.  The programs themselves 
-are really quite simple, and more complex topics like crossover selection 
-using roulette wheel algorithms, insertion/deletion mutation, etc, have not 
-been included.
-
-### History
-
-I've been working with Genetic Algorithms for a little while now and I
-stubmled across a 
-[C++ implemetation](http://www.generation5.org/content/2003/gahelloworld.asp) 
-a while ago.  I decided to bring it back to life and migrate it to Java with 
-my own enhancements.  This is far from ideal code, but it was designed to be 
-a gentle introduction for newcomers to genetic algorithms.
-
-### But why the <i>net.auxesia</i> package/namespace?
-
-[Auxesia](http://www.theoi.com/Ouranios/HoraAuxesia.html) is the greek
-goddess of spring growth, so when dealing with evolutionary programming like
-genetic algorithms, the name just seemed to fit.  That and I was trying to be
-witty with my naming, and [Dalek](http://en.wikipedia.org/wiki/Dalek) just 
-didn't seem right.
+of genetic algorithms, specifically with Java.  The program itself is really 
+simple, and spans 3 classes.  Only two of them do any real interesting work;
+the third one, <i>GAHelloWorld</i>, only exists as a driver for the 
+application.
 
 ## Usage
 
-Take a look at the README files in [Java](java/) and [Clojure](clojure/) for 
-the specifics for each language.
+The project currently uses [Maven](http://maven.apache.org) for the build.
+To build it locally, run the following from a shell:
 
-## TODO
+> mvn clean install
 
-*   Unit testing.  Lots of it, for both Clojure and Java.
-*   Fix an outstanding bug in the Clojure code.  My Clojure kung fu is weak 
-    here, so I'll be seeking assistance.
+To execute the simulation, change to the <i>target</i> directory and run:
+
+> java -jar gahelloworld-1.0-SNAPSHOT.jar
 
 ## Copyright and License
 

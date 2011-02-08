@@ -20,11 +20,11 @@
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 ;; THE SOFTWARE.
 
-(ns gahelloworld.core
+(ns net.auxesia.core
   "This namespace defines the main driver for the 'Hello, world!'
    genetic algorithm application."
-  (:require [gahelloworld.population :as population]
-	    [gahelloworld.chromosome :as chromosome])
+  (:require [net.auxesia.population :as population]
+	        [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
 (defn -main

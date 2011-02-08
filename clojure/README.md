@@ -1,11 +1,29 @@
-# clojure
+# Genetic Algorithm Hello World! (Clojure Edition)
 
-This is the clojure implementation of my "Hello, world!" genetic algorithm
-example.
+This is a simple project intended to showcase genetic algorithms with a well 
+known example for all new developers; namely the classic "Hello, world!" 
+example, written in Clojure.
+
+## Overview
+
+The application simply "evolves" the string "Hello, world!" from a population 
+of random strings.  It is intended to be a gentle introduction into the world
+of genetic algorithms, specifically with Java.  The program itself is really 
+simple, and spans 3 namespaces.  Only two of them do any real interesting 
+work; the third one, <i>core.clj</i>, only exists as a driver for the 
+application.
 
 ## Usage
 
-FIXME: write
+The project currently uses 
+[Leiningen](https://github.com/technomancy/leiningen) for the build.  To build 
+it locally, run the following from a shell:
+
+> lein uberjar
+
+To execute the application, execute the build and then run:
+
+> java -jar gahelloworld-1.0.0-SNAPSHOT-standalone.jar
 
 ## Copyright and License
 
