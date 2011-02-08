@@ -32,8 +32,8 @@ didn't seem right.
 
 ## Usage
 
-Take a look at the README files in [Java](java/) and [Clojure](clojure/) for 
-the specifics for each language.
+Take a look at the README files in [Java](GAHelloWorld/java/) and 
+[Clojure](GAHelloWorld/clojure/) for the specifics for each language.
 
 ## TODO
 
