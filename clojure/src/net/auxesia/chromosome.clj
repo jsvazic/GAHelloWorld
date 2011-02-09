@@ -67,8 +67,8 @@
   (let [gene1 (:gene c1)
 	gene2 (:gene c2)
 	pivot (rand-int (count gene1))
-	child1 (into (drop pivot gene2) (reverse (take pivot gene1)))
-	child2 (into (drop pivot gene1) (reverse (take pivot gene2)))]
+	child1 (vec (into (drop pivot gene2) (reverse (take pivot gene1))))
+	child2 (vec (into (drop pivot gene1) (reverse (take pivot gene2))))]
     (vector
      (hash-map :gene child1 :fitness (fitness child1))
      (hash-map :gene child2 :fitness (fitness child2)))))

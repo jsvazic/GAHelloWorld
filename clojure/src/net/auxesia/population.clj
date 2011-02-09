@@ -14,7 +14,7 @@
 ;; 
 ;; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 ;; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+;; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
 ;; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 ;; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 ;; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -26,7 +26,7 @@
   (:require [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
-(def *tournament-size* 3)
+(def *tournament-size* 64)
 
 (defn generate
   "Function to generate a new population with a given size,
@@ -77,9 +77,9 @@
 			     x))]
     (loop [buffer (take elitism-size chromosomes)
 	   idx (inc elitism-size)]
-      (if (>= (count buffer) size)
+      (if (>= idx size)
 	(assoc population :population
-	       (sort-by (fn [x] (:fitness x)) (doall (take size buffer))))
+	       (vec (sort-by (fn [x] (:fitness x)) (doall (take size buffer)))))
 	(if (<= (rand) (:crossover population))
 	  ;; Perform a crossover
 	  (let [c1 (tournament-selection chromosomes)
