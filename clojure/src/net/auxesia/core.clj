@@ -30,11 +30,11 @@
 (defn -main
   "This is the main function used for command-line execution."
   [& args]
-  (let [size 2048
+  (let [size 16
 	crossover-ratio 0.8
 	elitism-ratio 0.1
 	mutation-ratio 0.03
-	max-generations 16384]
+	max-generations 10]
     (loop [generation 0
 	   ga-pop (population/generate size
 				       crossover-ratio
@@ -43,6 +43,9 @@
       (let [best (population/best ga-pop)]
 	(do
 	  (println "Generation" generation (apply str (:gene best)))
+	  (println "Size" (count (:population ga-pop)))
+	  (println "Population" (:population ga-pop))
+	  (println)
 	  (cond
 	   (= 0 (:fitness best)) best
 	   (>= generation max-generations) best

@@ -26,7 +26,7 @@
   (:require [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
-(def *tournament-size* 64)
+(def *tournament-size* 3)
 
 (defn generate
   "Function to generate a new population with a given size,
