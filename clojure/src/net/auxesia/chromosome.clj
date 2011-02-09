@@ -26,20 +26,20 @@
   (:gen-class))
 
 ;; The target string that we'll compare against for calculating fitness
-(def *target-str* (vec "Hello, world!"))
+(def *target-gene* (vec "Hello, world!"))
 
 (defn- fitness
   "A function used to calculate the fitness of a given string, where
    the fitness is determined to be the absolute sum of the difference
    in the ascii characters for the string compared with the target
    string."
-  [str]
-  (let [len (count str)]
+  [v]
+  (let [len (count v)]
     (loop [fitness 0 idx 0]
-	  (if (== idx len)
+	  (if (= idx len)
 	    fitness
-	    (recur (+ fitness (Math/abs (- (int (nth str idx))
-					   (int (nth *target-str* idx)))))
+	    (recur (+ fitness (Math/abs (- (int (get v idx))
+					   (int (get *target-gene* idx)))))
 		   (inc idx))))))
 
 (defn- rand-gene
@@ -52,32 +52,28 @@
    and returned, where a single element of the :gene in the given chromosome
    is modified and a new :fitness is assigned based on the new :gene."
   [c]
-  (let [old (:gene c)
-	idx (rand-int (count old))
-	new (assoc old idx (char (mod (+ (int (nth old idx))
-					 (+ 32 (rand-int 90))) 122)))]
-    (assoc c :gene new
-	     :fitness (fitness new))))
-
+  (let [old-gene (:gene c)
+	idx (rand-int (count old-gene))
+	new-gene (assoc old-gene idx (char (mod (+ (int (get old-gene idx))
+						   (+ 32 (rand-int 90)))
+						122)))]
+    (assoc c :gene new-gene
+	     :fitness (fitness new-gene))))
+		 
+(defn generate
+  "Function to generate a new chromosome, either with a random gene or
+   a specific gene."
+  ([]
+     (generate (rand-gene (count *target-gene*))))
+  ([gene]
+     (hash-map :gene gene :fitness (fitness gene))))
+	 
 (defn mate
   "Function used to mate two chromosomes with each other.  The mating
    process will return a new vector of two children, representing
    the mating of the two given chromosomes."
   [c1 c2]
-  (let [gene1 (:gene c1)
-	gene2 (:gene c2)
-	pivot (rand-int (count gene1))
-	child1 (vec (into (drop pivot gene2) (reverse (take pivot gene1))))
-	child2 (vec (into (drop pivot gene1) (reverse (take pivot gene2))))]
-    (vector
-     (hash-map :gene child1 :fitness (fitness child1))
-     (hash-map :gene child2 :fitness (fitness child2)))))
-
-(defn generate
-  "Function to generate a new chromosome, either with a random gene or
-   a specific gene."
-  ([]
-     (let [gene (rand-gene (count *target-str*))]
-       (generate gene)))
-  ([gene]
-     (hash-map :gene gene :fitness (fitness gene))))
+  (let [pivot (rand-int (count *target-gene*))
+	child1 (into (subvec (:gene c1) 0 pivot) (subvec (:gene c2) pivot))
+	child2 (into (subvec (:gene c2) 0 pivot) (subvec (:gene c1) pivot))]
+    (vector (generate child1) (generate child2))))
