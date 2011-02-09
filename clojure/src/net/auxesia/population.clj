@@ -73,12 +73,12 @@
 	elitism-size (int (Math/round (* (:elitism population) size)))
 	r-mutate (fn [x] (if (<= (rand) (:mutation population))
 			   (chromosome/mutate x)
-			     x))]
+			   x))]
     (loop [buffer (subvec chromosomes 0 elitism-size)
 	   idx (inc elitism-size)]
       (if (>= idx size)
 	(assoc population :population
-	       (sort-by (fn [x] (:fitness x)) (subvec buffer 0 size)))
+	       (vec (sort-by (fn [x] (:fitness x)) (take size buffer))))
 	(if (<= (rand) (:crossover population))
 	  ;; Perform a crossover
 	  (let [c1 (tournament-selection chromosomes)
@@ -86,5 +86,5 @@
 	    (recur (into buffer (map #(r-mutate %) (chromosome/mate c1 c2)))
 		   (inc (inc idx))))
 	  ;; Perform a straight copy with mutation
-	  (recur (conj buffer (r-mutate (nth chromosomes idx)))
+	  (recur (conj buffer (r-mutate (get chromosomes idx)))
 		 (inc idx)))))))
