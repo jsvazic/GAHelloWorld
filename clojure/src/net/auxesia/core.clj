@@ -33,7 +33,7 @@
   [& args]
   (let [size 2048
 	crossover-ratio 0.8
-	elitism-ratio 0.05
+	elitism-ratio 0.01
 	mutation-ratio 0.03
 	max-generations 16384]
     (loop [generation 0
@@ -44,8 +44,8 @@
       (let [best-chromosome (first (:population ga-pop))]
 	(do
 	  (println "Generation" generation (apply str (:gene best-chromosome)))
-	  (if (= 0 (mod generation 10))
-	    (pprint/pprint (take 10 (:population ga-pop))))
+	  (if (= 0 (mod generation 25))
+	    (pprint/pprint (take 25 (:population ga-pop))))
 	  (cond
 	   (= 0 (:fitness best-chromosome)) best-chromosome
 	   (>= generation max-generations) best-chromosome

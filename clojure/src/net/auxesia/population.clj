@@ -73,7 +73,7 @@
 			   x))]
     (loop [buffer (subvec chromosomes 0 (inc elitism-size))
 	   idx (inc elitism-size)]
-      (if (> idx size)
+      (if (>= idx size)
 	(assoc population :population
 	       (vec (sort-by (fn [x] (:fitness x)) (take size buffer))))
 	(if (<= (rand) (:crossover population))
