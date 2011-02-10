@@ -43,7 +43,7 @@ import java.util.Random;
 public class Population {
 
 	/** The size of the tournament. */
-	private static final int TOURNAMENT_SIZE = 64;
+	private static final int TOURNAMENT_SIZE = 3;
 	
 	/** Convenience randomizer. */
 	private static final Random rand = new Random(System.currentTimeMillis());

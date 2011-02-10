@@ -26,7 +26,7 @@
   (:require [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
-(def *tournament-size* 64)
+(def *tournament-size* 3)
 
 (defn generate
   "Function to generate a new population with a given size,
@@ -80,7 +80,7 @@
 	  ;; Perform a crossover
 	  (let [c1 (tournament-selection chromosomes)
 		c2 (tournament-selection chromosomes)]
-	    (recur (into buffer (map #(r-mutate %) (chromosome/mate c1 c2)))
+	    (recur (into buffer (doall (map #(r-mutate %) (chromosome/mate c1 c2))))
 		   (inc (inc idx))))
 	  ;; Perform a straight copy with mutation
 	  (recur (conj buffer (r-mutate (get chromosomes idx)))

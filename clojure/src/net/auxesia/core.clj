@@ -24,8 +24,7 @@
   "This namespace defines the main driver for the 'Hello, world!'
    genetic algorithm application."
   (:require [net.auxesia.population :as population]
-	    [net.auxesia.chromosome :as chromosome]
-	    [clojure.pprint :as pprint])
+	    [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
 (defn -main
@@ -44,8 +43,6 @@
       (let [best-chromosome (first (:population ga-pop))]
 	(do
 	  (println "Generation" generation (apply str (:gene best-chromosome)))
-	  (if (= 0 (mod generation 25))
-	    (pprint/pprint (take 25 (:population ga-pop))))
 	  (cond
 	   (= 0 (:fitness best-chromosome)) best-chromosome
 	   (>= generation max-generations) best-chromosome
