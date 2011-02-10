@@ -26,7 +26,7 @@
   (:require [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
-(def *tournament-size* 3)
+(def *tournament-size* 64)
 
 (defn generate
   "Function to generate a new population with a given size,
@@ -39,25 +39,22 @@
 	      :mutation mutation
 	      :population chromosomes)))
 
-(defn best
-  "Function to retrieve the best fit chromosome for
-   a population."
-  [p]
-  (first (:population p)))
+(defn- best-fitness
+  "Function used to retrieve the better of two provided genes based on
+   their fitness."
+  [v1 v2]
+  (if (< (:fitness v1) (:fitness v2))
+    v1
+    v2))
 
-(defn- tournament-selection [v]
+(defn- tournament-selection
   "Function to perform a tournament selection to retrieve a random
    chromosome from the given sequence of chromosomes."
-  (let [pop-size (count v)]
-    (loop [best (get v (rand-int pop-size))
-	   i 0]
-      (if (= i *tournament-size*)
-	best
-	(let [contender (get v (rand-int pop-size))
-	      new-best (if (< (:fitness best) (:fitness contender))
-			 best
-			 contender)]
-	  (recur new-best (inc i)))))))
+  [col]
+  (loop [best (rand-nth col) i 0]
+    (if (= i *tournament-size*)
+      best
+      (recur (best-fitness best (rand-nth col)) (inc i)))))
 
 (defn evolve
   "Function to evolve a given population.  The population carries over
@@ -74,9 +71,9 @@
 	r-mutate (fn [x] (if (<= (rand) (:mutation population))
 			   (chromosome/mutate x)
 			   x))]
-    (loop [buffer (subvec chromosomes 0 elitism-size)
+    (loop [buffer (subvec chromosomes 0 (inc elitism-size))
 	   idx (inc elitism-size)]
-      (if (>= idx size)
+      (if (> idx size)
 	(assoc population :population
 	       (vec (sort-by (fn [x] (:fitness x)) (take size buffer))))
 	(if (<= (rand) (:crossover population))
