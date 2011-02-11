@@ -75,12 +75,13 @@
 	   idx (inc elitism-size)]
       (if (>= idx size)
 	(assoc population :population
-	       (vec (sort-by (fn [x] (:fitness x)) (take size buffer))))
+	       (vec (sort-by #(:fitness %) (take size buffer))))
 	(if (<= (rand) (:crossover population))
 	  ;; Perform a crossover
 	  (let [c1 (tournament-selection chromosomes)
 		c2 (tournament-selection chromosomes)]
-	    (recur (into buffer (doall (map #(r-mutate %) (chromosome/mate c1 c2))))
+	    (recur (into buffer (doall (map #(r-mutate %)
+					    (chromosome/mate c1 c2))))
 		   (inc (inc idx))))
 	  ;; Perform a straight copy with mutation
 	  (recur (conj buffer (r-mutate (get chromosomes idx)))
