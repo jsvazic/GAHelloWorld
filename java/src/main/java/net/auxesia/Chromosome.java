@@ -196,4 +196,13 @@ public class Chromosome implements Comparable<Chromosome> {
 		Chromosome c = (Chromosome) o;
 		return (gene.equals(c.gene) && fitness == c.fitness);
 	}
+	
+	/**
+	 * @see Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {		
+		return new StringBuilder().append(gene).append(fitness)
+				.toString().hashCode();
+	}
 }
