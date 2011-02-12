@@ -45,7 +45,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	private final int fitness;
 	
 	/** The target gene, converted to an array for convenience. */
-	private static final char[] TARGET_GENE = "Hello world!".toCharArray();
+	private static final char[] TARGET_GENE = "Hello, world!".toCharArray();
 
 	/** Convenience randomizer. */
 	private static final Random rand = new Random(System.currentTimeMillis());
@@ -56,6 +56,9 @@ public class Chromosome implements Comparable<Chromosome> {
 	 * @param gene The gene representing this <code>Chromosome</code>.
 	 */
 	public Chromosome(String gene) {
+		if (gene.length() != TARGET_GENE.length) {
+			throw new IllegalArgumentException("Invalid gene: " + gene);
+		}
 		this.gene    = gene;
 		this.fitness = calculateFitness(gene);
 	}
@@ -158,7 +161,7 @@ public class Chromosome implements Comparable<Chromosome> {
 	/* package */ static Chromosome generateRandom() {
 		char[] arr = new char[TARGET_GENE.length];
 		for (int i = 0; i < arr.length; i++) {
-			arr[i] = (char) ((rand.nextInt() % 90) + 32);
+			arr[i] = (char) (rand.nextInt(90) + 32);
 		}
 
 		return new Chromosome(String.valueOf(arr));
