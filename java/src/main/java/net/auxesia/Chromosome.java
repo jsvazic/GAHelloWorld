@@ -183,4 +183,17 @@ public class Chromosome implements Comparable<Chromosome> {
 		
 		return 0;
 	}
+	
+	/**
+	 * @see Object#equals(Object)
+	 */
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Chromosome)) {
+			return false;
+		}
+		
+		Chromosome c = (Chromosome) o;
+		return (gene.equals(c.gene) && fitness == c.fitness);
+	}
 }

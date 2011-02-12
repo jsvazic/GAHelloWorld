@@ -56,7 +56,7 @@ public class Population {
 	/**
 	 * Default constructor.
 	 * 
-	 * @param size The size of the population.
+	 * @param size The size of the population, where size > 0.
 	 * @param crossoverRatio The crossover ratio for the population during 
 	 * evolution, where 0.0 <= crossoverRatio <= 1.0.
 	 * @param elitismRatio The elitism ratio for the population during
@@ -69,13 +69,17 @@ public class Population {
 	public Population(int size, float crossoverRatio, float elitismRatio, 
 			float mutationRatio) {
 		
+		if (size < 1) {
+			throw new IllegalArgumentException("Invalid population size: "
+					+ size);
+		}
 		if (crossoverRatio < 0.0 || crossoverRatio > 1.0) {
 			throw new IllegalArgumentException("Invalid crossover ratio: " 
 					+ crossoverRatio);
 		}
 		this.crossover = crossoverRatio;
 
-		if (crossoverRatio < 0.0 || crossoverRatio >= 1.0) {
+		if (elitismRatio < 0.0 || elitismRatio >= 1.0) {
 			throw new IllegalArgumentException("Invalid elitisim ratio: " 
 					+ elitismRatio);
 		}
@@ -165,6 +169,47 @@ public class Population {
 		return popArr[0];
 	}
 	
+	/**
+	 * Method used to retrieve a copy of the current population.  This
+	 * method returns a copy of the population at the time the method was
+	 * called.
+	 * 
+	 * @return A copy of the population.
+	 */
+	public Chromosome[] getPopulation() {
+		Chromosome[] arr = new Chromosome[popArr.length];
+		System.arraycopy(popArr, 0, arr, 0, popArr.length);
+		
+		return popArr;
+	}
+	
+	/**
+	 * Method to retrieve the elitism ratio for the population.
+	 * 
+	 * @return The elitism ratio.
+	 */
+	public float getElitism() {
+		return elitism;
+	}
+
+	/**
+	 * Method to retrieve the crossover ratio for the population.
+	 * 
+	 * @return The crossover ratio.
+	 */
+	public float getCrossover() {
+		return crossover;
+	}
+
+	/**
+	 * Method to retrieve the mutation ratio for the population.
+	 * 
+	 * @return The mutation ratio.
+	 */
+	public float getMutation() {
+		return mutation;
+	}
+
 	/**
 	 * A helper method that can be used to select two random parents from
 	 * the population to use in crossover during evolution. 
