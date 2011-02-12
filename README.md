@@ -37,9 +37,8 @@ Take a look at the README files in [Java](GAHelloWorld/tree/master/java) and
 
 ## TODO
 
-*   Unit testing.  Lots of it, for both Clojure and Java.
-*   Fix an outstanding bug in the Clojure code.  My Clojure kung fu is weak 
-    here, so I'll be seeking assistance.
+*   Unit testing for Clojure.  Looking at using 
+    [Midje](https://github.com/marick/Midje) 
 
 ## Copyright and License
 
