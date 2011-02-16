@@ -51,10 +51,11 @@
   "Function to perform a tournament selection to retrieve a random
    chromosome from the given sequence of chromosomes."
   [col]
-  (loop [best (rand-nth col) i 0]
-    (if (= i *tournament-size*)
-      best
-      (recur (best-fitness best (rand-nth col)) (inc i)))))
+  (let [tournament-size (int *tournament-size*)]
+    (loop [best (rand-nth col) i (int 0)]
+      (if (== i *tournament-size*)
+	best
+	(recur (best-fitness best (rand-nth col)) (inc i))))))
 
 (defn evolve
   "Function to evolve a given population.  The population carries over
@@ -66,13 +67,13 @@
    random mutation (based on the :mutation property)."
   [population]
   (let [chromosomes (:population population)
-        size (count chromosomes)
+        size (int (count chromosomes))
 	elitism-size (int (Math/round (* (:elitism population) size)))
 	r-mutate (fn [x] (if (<= (rand) (:mutation population))
 			   (chromosome/mutate x)
 			   x))]
     (loop [buffer (subvec chromosomes 0 (inc elitism-size))
-	   idx (inc elitism-size)]
+	   idx (int (inc elitism-size))]
       (if (>= idx size)
 	(assoc population :population
 	       (vec (sort-by #(:fitness %) (take size buffer))))

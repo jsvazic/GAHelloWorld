@@ -34,12 +34,14 @@
    in the ascii characters for the string compared with the target
    string."
   [v]
-  (let [len (count v)]
-    (loop [fitness 0 idx 0]
-	  (if (= idx len)
+  (let [len (int (count v))
+	target *target-gene*]
+    (loop [fitness (int 0)
+	   idx (int 0)]
+	  (if (== idx len)
 	    fitness
-	    (recur (+ fitness (Math/abs (- (int (get v idx))
-					   (int (get *target-gene* idx)))))
+	    (recur (+ fitness (int (Math/abs (- (int (get v idx))
+					   (int (get *target-gene* idx))))))
 		   (inc idx))))))
 
 (defn- rand-gene
