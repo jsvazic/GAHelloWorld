@@ -29,6 +29,8 @@ genetic algorithms.
 
 from random import (random, randint)
 
+__all__ = ['Chromosome', 'Population']
+
 class Chromosome(object):
     """
     This class is used to define a chromosome for the gentic algorithm 
@@ -106,7 +108,7 @@ class Chromosome(object):
         gene.
         """
         gene = []
-        for x in range(0, len(Chromosome.__target_gene)):
+        for x in range(len(Chromosome.__target_gene)):
             gene.append(chr(randint(0, 89) + 32))
                 
         return Chromosome(''.join(gene))
@@ -132,7 +134,7 @@ class Population(object):
         self._crossover = crossover
         
         buf = []
-        for i in range(0, size): buf.append(Chromosome.genRandom())
+        for i in range(size): buf.append(Chromosome.genRandom())
         self._population = list(sorted(buf, key=lambda x: x.fitness))
     
     @property
@@ -171,7 +173,7 @@ class Population(object):
         population using a tournament selection algorithm.
         """
         best = self.population[randint(0, len(self._population) - 1)]
-        for i in range(0, Population.__tournamentSize):
+        for i in range(Population.__tournamentSize):
             cont = self._population[randint(0, len(self._population) - 1)]
             if (cont.fitness < best.fitness): best = cont
                     
@@ -212,12 +214,13 @@ class Population(object):
         
         self._population = list(sorted(buf[0:size], key=lambda x: x.fitness))
 
-maxGenerations = 16384
-pop = Population(size=2048, crossover=0.8, elitism=0.1, mutation=0.03)
+if __name__ == "__main__":
+	maxGenerations = 16384
+	pop = Population(size=2048, crossover=0.8, elitism=0.1, mutation=0.3)
 
-for i in range(1, maxGenerations + 1):
-    print "Generation %d: %s" % (i, pop.population[0].gene)
-    if pop.population[0].fitness == 0: break
-    else: pop.evolve()
-else:
-    print "Maximum generations reached without success."
+	for i in range(1, maxGenerations + 1):
+		print "Generation %d: %s" % (i, pop.population[0].gene)
+		if pop.population[0].fitness == 0: break
+		else: pop.evolve()
+	else:
+		print "Maximum generations reached without success."
