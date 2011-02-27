@@ -8,10 +8,13 @@ example!
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, using both Java and Clojure.  The programs themselves 
-are really quite simple, and more complex topics like crossover selection 
-using roulette wheel algorithms, insertion/deletion mutation, etc, have not 
-been included.
+of genetic algorithms, using Java, Clojure and Python.  The programs 
+themselves are really quite simple, and more complex topics like crossover 
+selection using roulette wheel algorithms, insertion/deletion mutation, etc, 
+have not been included.
+
+Future plans include adding examples in more languages, including Ruby and 
+Scala.
 
 ### History
 
@@ -39,6 +42,7 @@ Take a look at the README files in [Java](GAHelloWorld/tree/master/java) and
 
 *   Unit testing for Clojure.  Looking at using 
     [Midje](https://github.com/marick/Midje) 
+*	Unit testing for Python.
 
 ## Copyright and License
 

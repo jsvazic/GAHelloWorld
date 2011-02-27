@@ -1,29 +1,23 @@
-# Genetic Algorithm Hello World! (Clojure Edition)
+# Genetic Algorithm Hello World! (Python Edition)
 
 This is a simple project intended to showcase genetic algorithms with a well 
 known example for all new developers; namely the classic "Hello, world!" 
-example, written in Clojure.
+example, written in Python.
 
 ## Overview
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, specifically with Clojure.  The program itself is 
-really quite simple, and spans 3 namespaces.  Only two of them do any real 
-interesting work; the third one, <i>core.clj</i>, only exists as a driver for 
-the application.
+of genetic algorithms, specifically with Python 2.7.  The program itself is 
+really simple, and is contained within a single file.
 
 ## Usage
 
-The project currently uses 
-[Leiningen](https://github.com/technomancy/leiningen) for the build.  To build 
-it locally, run the following from a shell:
+The project is completely self contained. To execute the application, run
+the following command from a shell (assuming that python 2.7+ is on your 
+path):
 
-> lein uberjar
-
-To execute the application, execute the build and then run:
-
-> java -jar gahelloworld-1.0.0-SNAPSHOT-standalone.jar
+> python gahelloworld.py
 
 ## Copyright and License
 
