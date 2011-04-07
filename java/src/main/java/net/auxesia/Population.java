@@ -69,26 +69,8 @@ public class Population {
 	public Population(int size, float crossoverRatio, float elitismRatio, 
 			float mutationRatio) {
 		
-		if (size < 1) {
-			throw new IllegalArgumentException("Invalid population size: "
-					+ size);
-		}
-		if (crossoverRatio < 0.0 || crossoverRatio > 1.0) {
-			throw new IllegalArgumentException("Invalid crossover ratio: " 
-					+ crossoverRatio);
-		}
 		this.crossover = crossoverRatio;
-
-		if (elitismRatio < 0.0 || elitismRatio >= 1.0) {
-			throw new IllegalArgumentException("Invalid elitisim ratio: " 
-					+ elitismRatio);
-		}
 		this.elitism = elitismRatio;
-
-		if (mutationRatio < 0.0 || mutationRatio > 1.0) {
-			throw new IllegalArgumentException("Invalid mutation ratio: " 
-					+ mutationRatio);
-		}
 		this.mutation = mutationRatio;
 		
 		// Generate an initial population
@@ -155,18 +137,6 @@ public class Population {
 		
 		// Reset the population
 		popArr = buffer;
-	}
-	
-	/**
-	 * Convenience method for retrieving the best <code>Chromosome</code> 
-	 * from the population.  The "best" <code>Chromosome</code> is determined
-	 * by its fitness, with a lower fitness being better than a higher 
-	 * fitness.
-	 * 
-	 * @return The best fit <code>Chromosome</code> in the population.
-	 */
-	public Chromosome getBest() {
-		return popArr[0];
 	}
 	
 	/**

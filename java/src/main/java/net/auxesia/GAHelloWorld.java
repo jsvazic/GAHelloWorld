@@ -70,18 +70,19 @@ public class GAHelloWorld {
 		// Start evolving the population, stopping when the maximum number of
 		// generations is reached, or when we find a solution.
 		int i = 0;
-		while ((i++ <= maxGenerations) && (pop.getBest().getFitness() != 0)) {
-			System.out.println("Generation " + i + ": " + pop.getBest().getGene());
+		Chromosome best = pop.getPopulation()[0];
+		
+		while ((i++ <= maxGenerations) && (best.getFitness() != 0)) {
+			System.out.println("Generation " + i + ": " + best.getGene());
 			pop.evolve();
+			best = pop.getPopulation()[0];
 		}
 		
 		// Get the end time for the simulation.
 		long endTime = System.currentTimeMillis();
 		
 		// Print out some information to the console.
-		System.out.println("Generation " + i + ": " + 
-				pop.getBest().getGene());
-		
+		System.out.println("Generation " + i + ": " + best.getGene());
 		System.out.println("Total execution time: " + (endTime - startTime) + 
 				"ms");
 	}

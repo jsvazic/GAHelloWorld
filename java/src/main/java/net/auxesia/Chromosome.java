@@ -56,9 +56,6 @@ public class Chromosome implements Comparable<Chromosome> {
 	 * @param gene The gene representing this <code>Chromosome</code>.
 	 */
 	public Chromosome(String gene) {
-		if (gene.length() != TARGET_GENE.length) {
-			throw new IllegalArgumentException("Invalid gene: " + gene);
-		}
 		this.gene    = gene;
 		this.fitness = calculateFitness(gene);
 	}

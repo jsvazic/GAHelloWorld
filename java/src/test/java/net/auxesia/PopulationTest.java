@@ -60,68 +60,6 @@ public class PopulationTest {
 			assertFalse("Failed to construct a valid chromosome : "
 					+ t.getMessage(), true);
 		}
-
-		try {
-			new Population(-1, 0.8f, 0.1f, 0.05f);
-			assertFalse("Created a population with an invalid size.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-		
-		try {
-			new Population(0, 0.8f, 0.1f, 0.05f);
-			assertFalse("Created a chromosome with an invalid size.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-
-		try {
-			new Population(1024, -1.0f, 0.1f, 0.05f);
-			assertFalse("Created a population with an invalid " +
-					"crossover ratio.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-
-		try {
-			new Population(1024, 1.01f, 0.1f, 0.05f);
-			assertFalse("Created a population with an invalid " +
-					"crossover ratio.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-		
-		try {
-			new Population(1024, 0.8f, -1.0f, 0.05f);
-			assertFalse("Created a population with an invalid " +
-					"elitism ratio.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-
-		try {
-			new Population(1024, 0.8f, 1.0f, 0.05f);
-			assertFalse("Created a population with an invalid " +
-					"elitism ratio.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-		
-		try {
-			new Population(1024, 0.8f, 0.1f, -1.0f);
-			assertFalse("Created a population with an invalid " +
-					"mutation ratio.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-		
-		try {
-			new Population(1024, 0.8f, 0.1f, 1.01f);
-			assertFalse("Created a chromosome with an invalid " +
-					"mutation ratio.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
 	}
 	
 	/**
@@ -192,22 +130,9 @@ public class PopulationTest {
 		Arrays.sort(newArr);
 		
 		// Assert that the array is actually sorted.
-		assertArrayEquals(arr, newArr);		
+		assertArrayEquals(arr, newArr);
 	}
-	
-	/**
-	 * Method to test <code>Population.getBest()</code>.
-	 * 
-	 *  @see net.auxesia.Population#getBest()
-	 */
-	@Test
-	public void testGetBest() {
-		Population pop   = new Population(1024, 0.8f, 0.1f, 0.05f);
-		Chromosome[] arr = pop.getPopulation();
 		
-		assertEquals(arr[0], pop.getBest());
-	}
-	
 	/**
 	 * Method to test <code>Population.evolve()</code>.
 	 * 

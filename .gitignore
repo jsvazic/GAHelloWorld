@@ -1,6 +1,8 @@
 .classpath
 .project
 .settings
+.scala_dependencies
+.metadata/
 bin/
 java/target
 clojure/pom.xml

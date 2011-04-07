@@ -49,7 +49,7 @@ class Chromosome(object):
     
     def __init__(self, gene):
         self._gene = gene
-        self._fitness = Chromosome._updateFitness(gene)
+        self._fitness = Chromosome._update_fitness(gene)
     
     @property
     def gene(self):
@@ -90,7 +90,7 @@ class Chromosome(object):
         return Chromosome(''.join(gene))
 
     @staticmethod            
-    def _updateFitness(gene):
+    def _update_fitness(gene):
         """
         Helper method used to return the fitness for the chromosome based
         on its gene.
@@ -102,7 +102,7 @@ class Chromosome(object):
         return fitness
         
     @staticmethod
-    def genRandom():
+    def gen_random():
         """
         A convenience method for generating a random chromosome with a random
         gene.
@@ -134,7 +134,7 @@ class Population(object):
         self._crossover = crossover
         
         buf = []
-        for i in range(size): buf.append(Chromosome.genRandom())
+        for i in range(size): buf.append(Chromosome.gen_random())
         self._population = list(sorted(buf, key=lambda x: x.fitness))
     
     @property
@@ -167,7 +167,7 @@ class Population(object):
         """
         return self._crossover
                     
-    def __tournamentSelection(self):
+    def __tournament_selection(self):
         """
         A helper method used to select a random chromosome from the 
         population using a tournament selection algorithm.
@@ -185,7 +185,7 @@ class Population(object):
         tournament selection algorithm.
         """
                     
-        return (self.__tournamentSelection(), self.__tournamentSelection())
+        return (self.__tournament_selection(), self.__tournament_selection())
         
     def evolve(self):
         """

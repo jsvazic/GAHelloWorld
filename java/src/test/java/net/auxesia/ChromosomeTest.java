@@ -35,48 +35,6 @@ import org.junit.Test;
  * @version 1.0
  */
 public class ChromosomeTest {
-
-	/**
-	 * Method used to test the constructor for <code>Chromsome</code>.
-	 * 
-	 * @see net.auxesia.Chromosome
-	 */
-	@Test
-	public void testConstructor() {
-		try {
-			new Chromosome("Hello, world!");
-		} catch (Throwable t) {
-			assertFalse("Failed to construct a valid chromosome.", true);
-		}
-		
-		try {
-			new Chromosome("123  45asd");
-			assertFalse("Created a chromosome with a short gene.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-		
-		try {
-			new Chromosome("12345678901234");
-			assertFalse("Created a chromosome with a long gene.", true);
-		} catch (IllegalArgumentException ex) {
-			// Expected result
-		}
-	}
-	
-	/**
-	 * Method used to test <code>Chromosome.getGene()</code>.
-	 * 
-	 * @see net.auxesia.Chromosome#getGene()
-	 */
-	@Test
-	public void testGetGene(){
-		Chromosome c1 = new Chromosome("Hello, world!");
-		assertEquals("Hello, world!", c1.getGene());
-		
-		Chromosome c2 = new Chromosome("AbcDEF12I k[!");
-		assertEquals("AbcDEF12I k[!", c2.getGene());
-	}
 	
 	/**
 	 * Method used to test <code>Chromosome.getFitness()</code>.
