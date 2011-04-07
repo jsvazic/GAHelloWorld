@@ -36,13 +36,11 @@
   [v]
   (let [len (int (count v))
 	target *target-gene*]
-    (loop [fitness (int 0)
-	   idx (int 0)]
+    (loop [fitness (int 0) idx (int 0)]
 	  (if (== idx len)
 	    fitness
-	    (recur (+ fitness (int (Math/abs (- (int (get v idx))
-					   (int (get *target-gene* idx))))))
-		   (inc idx))))))
+	    (recur (+ fitness (int (Math/abs (- (int (get v idx)) (int (get *target-gene* idx))))))
+		       (inc idx))))))
 
 (defn- rand-gene
   "A convenience function that can generate a random gene for a given length."
@@ -55,12 +53,9 @@
    is modified and a new :fitness is assigned based on the new :gene."
   [c]
   (let [old-gene (:gene c)
-	idx (rand-int (count old-gene))
-	new-gene (assoc old-gene idx (char (mod (+ (int (get old-gene idx))
-						   (+ 32 (rand-int 90)))
-						122)))]
-    (assoc c :gene new-gene
-	     :fitness (fitness new-gene))))
+	    idx (rand-int (count old-gene))
+	    new-gene (assoc old-gene idx (char (mod (+ (int (get old-gene idx)) (+ 32 (rand-int 90))) 122)))]
+    (assoc c :gene new-gene :fitness (fitness new-gene))))
 		 
 (defn generate
   "Function to generate a new chromosome, either with a random gene or
@@ -76,6 +71,6 @@
    the mating of the two given chromosomes."
   [c1 c2]
   (let [pivot (rand-int (count *target-gene*))
-	child1 (into (subvec (:gene c1) 0 pivot) (subvec (:gene c2) pivot))
-	child2 (into (subvec (:gene c2) 0 pivot) (subvec (:gene c1) pivot))]
+	    child1 (into (subvec (:gene c1) 0 pivot) (subvec (:gene c2) pivot))
+	    child2 (into (subvec (:gene c2) 0 pivot) (subvec (:gene c1) pivot))]
     (vector (generate child1) (generate child2))))

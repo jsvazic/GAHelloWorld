@@ -32,20 +32,17 @@
   "Function to generate a new population with a given size,
    crossover rate, elitisim rate and mutation rate."
   [size crossover elitism mutation]
-  (let [chromosomes (vec (sort-by (fn [x] (:fitness x))
-				  (repeatedly size chromosome/generate)))]
+  (let [p (sort-by (fn [x] (:fitness x)) (repeatedly size chromosome/generate))]
     (hash-map :crossover crossover
-	      :elitism elitism
-	      :mutation mutation
-	      :population chromosomes)))
+	          :elitism elitism
+	          :mutation mutation
+	          :population (vec p))))
 
 (defn- best-fitness
   "Function used to retrieve the better of two provided genes based on
    their fitness."
   [v1 v2]
-  (if (< (:fitness v1) (:fitness v2))
-    v1
-    v2))
+  (if (< (:fitness v1) (:fitness v2)) v1 v2))
 
 (defn- tournament-selection
   "Function to perform a tournament selection to retrieve a random
@@ -54,8 +51,8 @@
   (let [tournament-size (int *tournament-size*)]
     (loop [best (rand-nth col) i (int 0)]
       (if (== i *tournament-size*)
-	best
-	(recur (best-fitness best (rand-nth col)) (inc i))))))
+	    best
+	    (recur (best-fitness best (rand-nth col)) (inc i))))))
 
 (defn evolve
   "Function to evolve a given population.  The population carries over
@@ -65,25 +62,21 @@
    parents (based on the :crossover ratio), or randomly selected
    from the population.  Any non-elitist members are subject to
    random mutation (based on the :mutation property)."
-  [population]
-  (let [chromosomes (:population population)
+  [p]
+  (let [chromosomes (:population p)
         size (int (count chromosomes))
-	elitism-size (int (Math/round (* (:elitism population) size)))
-	r-mutate (fn [x] (if (<= (rand) (:mutation population))
-			   (chromosome/mutate x)
-			   x))]
+	    elitism-size (int (Math/round (* (:elitism p) size)))
+	    r-mutate (fn [x] (if (<= (rand) (:mutation p)) (chromosome/mutate x) x))]
     (loop [buffer (subvec chromosomes 0 (inc elitism-size))
-	   idx (int (inc elitism-size))]
+	       idx (int (inc elitism-size))]
       (if (>= idx size)
-	(assoc population :population
-	       (vec (sort-by #(:fitness %) (take size buffer))))
-	(if (<= (rand) (:crossover population))
-	  ;; Perform a crossover
-	  (let [c1 (tournament-selection chromosomes)
-		c2 (tournament-selection chromosomes)]
-	    (recur (into buffer (doall (map #(r-mutate %)
-					    (chromosome/mate c1 c2))))
-		   (inc (inc idx))))
-	  ;; Perform a straight copy with mutation
-	  (recur (conj buffer (r-mutate (get chromosomes idx)))
-		 (inc idx)))))))
+	    (assoc p :population (vec (sort-by #(:fitness %) (take size buffer))))
+	    (if (<= (rand) (:crossover p))
+	      ;; Perform a crossover
+	      (let [c1 (tournament-selection chromosomes)
+		        c2 (tournament-selection chromosomes)]
+	        (recur (into buffer (doall (map #(r-mutate %) (chromosome/mate c1 c2))))
+		           (inc (inc idx))))
+	      ;; Perform a straight copy with mutation
+	      (recur (conj buffer (r-mutate (get chromosomes idx)))
+		         (inc idx)))))))

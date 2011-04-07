@@ -24,26 +24,26 @@
   "This namespace defines the main driver for the 'Hello, world!'
    genetic algorithm application."
   (:require [net.auxesia.population :as population]
-	    [net.auxesia.chromosome :as chromosome])
+            [net.auxesia.chromosome :as chromosome])
   (:gen-class))
 
 (defn -main
   "This is the main function used for command-line execution."
   [& args]
   (let [size (int 2048)
-	crossover-ratio (float 0.8)
-	elitism-ratio (float 0.01)
-	mutation-ratio (float 0.03)
-	max-generations (int 16384)]
+        crossover-ratio (float 0.8)
+		elitism-ratio (float 0.01)
+		mutation-ratio (float 0.03)
+		max-generations (int 16384)]
     (loop [generation (int 0)
-	   ga-pop (population/generate size
-				       crossover-ratio
-				       elitism-ratio
-				       mutation-ratio)]
+	       ga-pop (population/generate size
+				   crossover-ratio
+				   elitism-ratio
+			       mutation-ratio)]
       (let [best-chromosome (first (:population ga-pop))]
-	(do
-	  (println "Generation" generation (apply str (:gene best-chromosome)))
-	  (cond
-	   (== 0 (:fitness best-chromosome)) best-chromosome
-	   (>= generation max-generations) best-chromosome
-	   :default (recur (inc generation) (population/evolve ga-pop))))))))
+	    (do
+	      (println "Generation" generation (apply str (:gene best-chromosome)))
+	        (cond
+	          (== 0 (:fitness best-chromosome)) best-chromosome
+	          (>= generation max-generations) best-chromosome
+	          :default (recur (inc generation) (population/evolve ga-pop))))))))
