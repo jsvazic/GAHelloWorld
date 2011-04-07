@@ -39,30 +39,6 @@ import org.junit.Test;
  */
 public class PopulationTest {
 	/**
-	 * Method used to test the constructor for <code>Population</code>.
-	 * 
-	 * @see net.auxesia.Population
-	 */
-	@Test
-	public void testConstructor() {
-		try {
-			Population pop = new Population(1024, 0.8f, 0.1f, 0.05f);
-			assertEquals(1024, pop.getPopulation().length);
-			for (Chromosome c : pop.getPopulation()) {
-				assertNotNull("null entry for the initial population!", c);
-			}
-			new Population(1024, 0.0f, 0.1f, 0.05f);
-			new Population(1024, 0.8f, 0.0f, 0.05f);
-			new Population(1024, 0.8f, 0.1f, 0.0f);
-			new Population(1024, 1.0f, 0.1f, 0.05f);
-			new Population(1024, 0.8f, 0.1f, 1.0f);
-		} catch (Throwable t) {
-			assertFalse("Failed to construct a valid chromosome : "
-					+ t.getMessage(), true);
-		}
-	}
-	
-	/**
 	 * Method to test <code>Population.getCrossover()</code>.
 	 * 
 	 * @see net.auxesia.Population#getCrossover()

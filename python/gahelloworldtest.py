@@ -73,7 +73,7 @@ class ChromosomeTest(unittest.TestCase):
 			diff = 0;
 			for j in range(len(c1.gene)):
 				if c1.gene[j] != c2.gene[j]:
-					++diff
+					diff += 1
 			
 			self.assertTrue(diff <= 1)
 	
@@ -89,8 +89,8 @@ class ChromosomeTest(unittest.TestCase):
 		self.assertEqual(2, len(children))
 
 		# Check the resulting child gene lengths
-		self.assertEquals(13, len(children[0].gene))
-		self.assertEquals(13, len(children[1].gene))
+		self.assertEqual(13, len(children[0].gene))
+		self.assertEqual(13, len(children[1].gene))
 		
 		# Determine the pivot point for the mating
 		tmpArr = children[0].gene
@@ -113,5 +113,89 @@ class ChromosomeTest(unittest.TestCase):
 			else:
 				self.assertEqual(c1.gene[i], tmpArr[i])
 				
+class PopulationTest(unittest.TestCase):
+	def test_crossover(self):
+		"""
+		Method to test Population.crossover
+		"""
+		pop = Population(1024, 0.8, 0.1, 0.05)
+		self.assertEqual(80, int(pop.crossover * 100))
+		
+		pop = Population(1024, 0.0, 0.1, 0.05)
+		self.assertEqual(0, int(pop.crossover * 100))
+		
+		pop = Population(1024, 1.0, 0.1, 0.05)
+		self.assertEqual(100, int(pop.crossover * 100))
+	
+	def test_elitism(self):
+		"""
+		Method to test Population.elitism
+		"""
+		pop = Population(1024, 0.8, 0.1, 0.05)
+		self.assertEqual(10, int(pop.elitism * 100))
+		
+		pop = Population(1024, 0.8, 0.0, 0.05)
+		self.assertEqual(0, int(pop.elitism * 100))
+		
+		pop = Population(1024, 0.8, 0.99, 0.05)
+		self.assertEqual(99, int(pop.elitism * 100))
+	
+	def test_mutation(self):
+		"""
+		Method to test Population.mutation.
+		"""
+		pop = Population(1024, 0.8, 0.1, 0.05)
+		self.assertEqual(5, int(pop.mutation * 100))
+		
+		pop = Population(1024, 0.8, 0.1, 0.0)
+		self.assertEqual(0, int(pop.mutation * 100))
+		
+		pop = Population(1024, 0.8, 0.1, 1.0)
+		self.assertEqual(100, int(pop.mutation * 100))
+
+	def test_population(self):
+		"""
+		Method to test Population.population
+		"""
+		pop = Population(1024, 0.8, 0.1, 0.05)
+		arr = pop.population
+		
+		self.assertEqual(1024, len(arr))
+		newArr = list(sorted(arr[:], key=lambda x: x.fitness))
+		
+		# Assert that the array is actually sorted.
+		self.assertEqual(len(arr), len(newArr))
+		for x, y in zip(arr, newArr):
+			self.assertEqual(x, y)
+	
+	def test_evolve(self):
+		"""
+		Method to test Population.evolve()
+		"""
+		pop = Population(size=1024, crossover=0.8, elitism=0.1, mutation=0.05)
+		oldArr = pop.population
+		
+		# Evolve and get the new population
+		pop.evolve()
+		newArr = pop.population
+		
+		# Check the details on the resulting evolved population.
+		self.assertEqual(80, int(pop.crossover * 100))
+		self.assertEqual(10, int(pop.elitism * 100))
+		self.assertEqual(5, int(pop.mutation * 100))
+		
+		# Check to ensure that the elitism took.
+		elitismCount = int(round(1024 * 0.1))
+		counter = 0;
+		d = dict((x, 1) for x in newArr)
+		
+		for i in range(len(oldArr)):
+			if oldArr[i] in d:
+				counter += 1
+
+		# Account for the fact that mating/mutation may cause more than
+		# just the fixed number of chromosomes to be identical.
+		self.assertTrue(counter >= elitismCount)
+
 if __name__ == '__main__':
     unittest.main()
