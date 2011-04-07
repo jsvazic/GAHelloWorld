@@ -27,7 +27,7 @@ A python script that contains unit tests for the "Hello, world!" application.
 """
 
 import unittest
-import gahelloworld
+from gahelloworld import (Chromosome, Population)
 
 class ChromosomeTest(unittest.TestCase):
 
@@ -36,85 +36,82 @@ class ChromosomeTest(unittest.TestCase):
 		Method used to test Chromosome.fitness(), and indirectly 
 		Chromosome._update_fitness().
 		"""
-		c = new Chromosome("Hello, world!")
+		c = Chromosome("Hello, world!")
 		self.assertEqual(0, c.fitness)
 	
-		c = new Chromosome("H5p&J;!l<X\\7l")
+		c = Chromosome("H5p&J;!l<X\\7l")
 		self.assertEqual(399, c.fitness)
 		
-		c = new Chromosome("Vc;fx#QRP8V\\$")
+		c = Chromosome("Vc;fx#QRP8V\\$")
 		self.assertEqual(297, c.fitness)
 
-		c = new Chromosome("t\\O`E_Jx$n=NF")
+		c = Chromosome("t\\O`E_Jx$n=NF")
 		self.assertEqual(415, c.fitness)
 
 	def test_gen_random(self):
 		"""
 		Method used to test Chromosome.gen_random.
 		"""
-		for (int i = 0; i < 1000; i++):
-			c = Chromosome.generateRandom()
-			assertTrue(c.fitness >= 0)
-			assertEqual(13, len(c.gene))
-			for (char ch : c.gene().toCharArray()):
-				assertTrue("Character code : " + ((int) ch), ch >= 32);
-				assertTrue("Character code : " + ((int) ch), ch <= 121);
+		for i in range(1000):
+			c = Chromosome.gen_random()
+			self.assertTrue(c.fitness >= 0)
+			self.assertEqual(13, len(c.gene))
+			for ch in c.gene:
+				self.assertTrue(ord(ch) >= 32)
+				self.assertTrue(ord(ch) <= 121)
 	
 	def test_mutate(self):
 		"""
 		Method to test Chromosome.mutate()
 		"""
-		for (int i = 0; i < 1000; i++) {
-			c1 = Chromosome.generate_random()
-			arr1 = c1.gene.toCharArray()
-			
+		for i in range(1000):
+			c1 = Chromosome.gen_random()
 			c2 = c1.mutate()
-			arr2 = c2.gene.toCharArray()
+		
+			self.assertEqual(len(c1.gene), len(c2.gene))
 			
-			assertEqual(arr1.length, arr2.length)
-			
-			int diff = 0;
-			for (int j = 0; j < arr1.length; j++):
-				if (arr1[j] != arr2[j]):
+			diff = 0;
+			for j in range(len(c1.gene)):
+				if c1.gene[j] != c2.gene[j]:
 					++diff
 			
-			assertTrue(diff <= 1)
+			self.assertTrue(diff <= 1)
 	
 	def test_mate(self):
 		"""
 		Method to test Chromosome.mate(Chromosome)
 		"""
-		c1 = Chromosome.generate_random()
-		c2 = Chromosome.generate_random()
-		arr1 = c1.gene.toCharArray()
-		arr2 = c2.gene.toCharArray()
+		c1 = Chromosome.gen_random()
+		c2 = Chromosome.gen_random()
 
 		# Check to ensure the right number of children are returned.
 		children = c1.mate(c2)
-		assertEqual(2, children.length)
+		self.assertEqual(2, len(children))
 
 		# Check the resulting child gene lengths
-		assertEquals(13, children[0].gene.length())
-		assertEquals(13, children[1].gene.length())
+		self.assertEquals(13, len(children[0].gene))
+		self.assertEquals(13, len(children[1].gene))
 		
 		# Determine the pivot point for the mating
-		tmpArr = children[0].gene.toCharArray();
-		for (pivot = 0; pivot < arr1.length; pivot++):
-			if (arr1[pivot] != tmpArr[pivot]):
+		tmpArr = children[0].gene
+		for pivot in range(len(c1.gene)):
+			if c1.gene[pivot] != tmpArr[pivot]:
 				break;
 		
 		# Check the first child.
-		tmpArr = children[0].getGene().toCharArray();
-		for (int i = 0; i < tmpArr.length; i++):
+		for i in range(len(tmpArr)):
 			if (i < pivot):
-				assertEqual(arr1[i], tmpArr[i])
+				self.assertEqual(c1.gene[i], tmpArr[i])
 			else:
-				assertEqual(arr2[i], tmpArr[i])
+				self.assertEqual(c2.gene[i], tmpArr[i])
 
 		# Check the second child.
-		tmpArr = children[1].getGene().toCharArray();
-		for (int i = 0; i < tmpArr.length; i++):
-			if (i < pivot):
-				assertEqual(arr2[i], tmpArr[i]);
+		tmpArr = children[1].gene
+		for i in range(len(tmpArr)):
+			if i < pivot:
+				self.assertEqual(c2.gene[i], tmpArr[i])
 			else:
-				assertEqual(arr1[i], tmpArr[i]);
+				self.assertEqual(c1.gene[i], tmpArr[i])
+				
+if __name__ == '__main__':
+    unittest.main()
