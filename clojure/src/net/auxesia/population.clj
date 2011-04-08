@@ -38,17 +38,12 @@
 	          :mutation mutation
 	          :population (vec p))))
 
-(defn- best-fitness
-  "Function used to retrieve the better of two provided genes based on
-   their fitness."
-  [v1 v2]
-  (if (< (:fitness v1) (:fitness v2)) v1 v2))
-
 (defn- tournament-selection
   "Function to perform a tournament selection to retrieve a random
    chromosome from the given sequence of chromosomes."
   [col]
-  (let [tournament-size (int *tournament-size*)]
+  (let [tournament-size (int *tournament-size*)
+        best-fitness (fn [x y] (if (< (:fitness x) (:fitness y)) x y))]
     (loop [best (rand-nth col) i (int 0)]
       (if (== i *tournament-size*)
 	    best
