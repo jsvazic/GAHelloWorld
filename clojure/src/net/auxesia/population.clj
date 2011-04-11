@@ -47,7 +47,8 @@
   "Function to perform a tournament selection to retrieve a random
    chromosome from the given sequence of chromosomes."
   [col]
-  (let [tournament-size (int *tournament-size*)]
+  (let [tournament-size (int *tournament-size*)
+        best-fitness (fn [x y] (if (< (:fitness x) (:fitness y)) x y))]
     (loop [best (rand-nth col) i (int 0)]
       (if (== i tournament-size)
 	    best
@@ -64,10 +65,10 @@
   [p]
   (let [chromosomes (:population p)
         size (int (count chromosomes))
-	    elitism-size (int (Math/round (* (:elitism p) size)))
+	    e-size (int (Math/round (* (:elitism p) size)))
 	    r-mutate (fn [x] (if (<= (rand) (:mutation p)) (chromosome/mutate x) x))]
-    (loop [buf (subvec chromosomes 0 (inc elitism-size))
-	       idx (int (inc elitism-size))]
+    (loop [buf (subvec chromosomes 0 (inc e-size))
+	       idx (int (inc e-size))]
       (if (>= idx size)
 	    (Population. (:crossover p) (:elitism p) (:mutation p) (vec (sort-by #(:fitness %) (take size buf))))
 	    (if (<= (rand) (:crossover p))
