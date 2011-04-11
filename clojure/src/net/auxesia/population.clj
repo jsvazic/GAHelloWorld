@@ -28,21 +28,20 @@
 
 (def *tournament-size* 3)
 
+(defrecord Population [crossover elitism mutation population])
+
 (defn generate
   "Function to generate a new population with a given size,
    crossover rate, elitisim rate and mutation rate."
   [size crossover elitism mutation]
-  (let [p (sort-by (fn [x] (:fitness x)) (repeatedly size chromosome/generate))]
-    (hash-map :crossover crossover
-	          :elitism elitism
-	          :mutation mutation
-	          :population (vec p))))
+  (let [p (sort-by #(:fitness %) (repeatedly size chromosome/generate))]
+    (Population. crossover elitism mutation (vec p))))
 
 (defn- best-fitness
   "Function used to retrieve the better of two provided genes based on
    their fitness."
-  [v1 v2]
-  (if (< (:fitness v1) (:fitness v2)) v1 v2))
+  [c1 c2]
+  (if (< (:fitness c1) (:fitness c2)) c1 c2))
 
 (defn- tournament-selection
   "Function to perform a tournament selection to retrieve a random
@@ -50,7 +49,7 @@
   [col]
   (let [tournament-size (int *tournament-size*)]
     (loop [best (rand-nth col) i (int 0)]
-      (if (== i *tournament-size*)
+      (if (== i tournament-size)
 	    best
 	    (recur (best-fitness best (rand-nth col)) (inc i))))))
 
@@ -67,16 +66,16 @@
         size (int (count chromosomes))
 	    elitism-size (int (Math/round (* (:elitism p) size)))
 	    r-mutate (fn [x] (if (<= (rand) (:mutation p)) (chromosome/mutate x) x))]
-    (loop [buffer (subvec chromosomes 0 (inc elitism-size))
+    (loop [buf (subvec chromosomes 0 (inc elitism-size))
 	       idx (int (inc elitism-size))]
       (if (>= idx size)
-	    (assoc p :population (vec (sort-by #(:fitness %) (take size buffer))))
+	    (Population. (:crossover p) (:elitism p) (:mutation p) (vec (sort-by #(:fitness %) (take size buf))))
 	    (if (<= (rand) (:crossover p))
 	      ;; Perform a crossover
 	      (let [c1 (tournament-selection chromosomes)
 		        c2 (tournament-selection chromosomes)]
-	        (recur (into buffer (doall (map #(r-mutate %) (chromosome/mate c1 c2))))
+	        (recur (into buf (doall (map #(r-mutate %) (chromosome/mate c1 c2))))
 		           (inc (inc idx))))
 	      ;; Perform a straight copy with mutation
-	      (recur (conj buffer (r-mutate (get chromosomes idx)))
+	      (recur (conj buf (r-mutate (get chromosomes idx)))
 		         (inc idx)))))))

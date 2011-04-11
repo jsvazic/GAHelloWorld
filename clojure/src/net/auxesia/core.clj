@@ -31,19 +31,16 @@
   "This is the main function used for command-line execution."
   [& args]
   (let [size (int 2048)
-        crossover-ratio (float 0.8)
-		elitism-ratio (float 0.01)
-		mutation-ratio (float 0.03)
-		max-generations (int 16384)]
-    (loop [generation (int 0)
-	       ga-pop (population/generate size
-				   crossover-ratio
-				   elitism-ratio
-			       mutation-ratio)]
-      (let [best-chromosome (first (:population ga-pop))]
+        crossover (float 0.8)
+		elitism (float 0.01)
+		mutation (float 0.03)
+		max-gen (int 16384)]
+    (loop [g (int 0)
+	       p (population/generate size crossover elitism mutation)]
+      (let [best (first (:population p))]
 	    (do
-	      (println "Generation" generation (apply str (:gene best-chromosome)))
-	        (cond
-	          (== 0 (:fitness best-chromosome)) best-chromosome
-	          (>= generation max-generations) best-chromosome
-	          :default (recur (inc generation) (population/evolve ga-pop))))))))
+	      (println "Generation" g (apply str (:gene best)))
+	      (cond
+	        (== 0 (:fitness best)) best
+	        (>= g max-gen) best
+	        :default (recur (inc g) (population/evolve p))))))))

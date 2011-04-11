@@ -28,6 +28,8 @@
 ;; The target string that we'll compare against for calculating fitness
 (def *target-gene* (vec "Hello, world!"))
 
+(defrecord Chromosome [gene fitness])
+
 (defn- fitness
   "A function used to calculate the fitness of a given string, where
    the fitness is determined to be the absolute sum of the difference
@@ -55,15 +57,15 @@
   (let [old-gene (:gene c)
 	    idx (rand-int (count old-gene))
 	    new-gene (assoc old-gene idx (char (mod (+ (int (get old-gene idx)) (+ 32 (rand-int 90))) 122)))]
-    (assoc c :gene new-gene :fitness (fitness new-gene))))
-		 
+    (Chromosome. new-gene (fitness new-gene))))
+
 (defn generate
   "Function to generate a new chromosome, either with a random gene or
    a specific gene."
   ([]
      (generate (rand-gene (count *target-gene*))))
   ([gene]
-     (hash-map :gene gene :fitness (fitness gene))))
+     (Chromosome. gene (fitness gene))))
 	 
 (defn mate
   "Function used to mate two chromosomes with each other.  The mating
