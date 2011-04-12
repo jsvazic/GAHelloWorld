@@ -67,15 +67,11 @@ class ChromosomeTest(unittest.TestCase):
 		for i in range(1000):
 			c1 = Chromosome.gen_random()
 			c2 = c1.mutate()
-		
 			self.assertEqual(len(c1.gene), len(c2.gene))
 			
-			diff = 0;
-			for j in range(len(c1.gene)):
-				if c1.gene[j] != c2.gene[j]:
-					diff += 1
-			
-			self.assertTrue(diff <= 1)
+			s1 = set(c1.gene)
+			s2 = set(c2.gene)
+			self.assertTrue(len(s1 - s2) <= 1)
 	
 	def test_mate(self):
 		"""
