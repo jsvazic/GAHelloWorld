@@ -4,7 +4,10 @@
 .scala_dependencies
 .metadata/
 bin/
-java/target
+target/
+lib_managed/
+src_managed/
+scala/project/boot/
 clojure/pom.xml
 clojure/*jar
 clojure/lib
