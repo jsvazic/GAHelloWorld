@@ -41,7 +41,7 @@
 	    true
         (do
           (is (>= (:fitness c) 0))
-	      (is (== 13 (count (:gene c))))
+	      (is (== (count chromosome/*target-gene*) (count (:gene c))))
 		  (let [gene (:gene c)]
 		    (loop [g-idx (int 0)]
 		      (if (== g-idx (count gene))
@@ -86,20 +86,20 @@
 	    (testing "Size of returned sequence from the mate function"
 	      (is (== 2 (count children))))
 	    (testing "Size of the gene from the first child"
-	      (is (== 13 (count (:gene (first children))))))
+	      (is (== (count chromosome/*target-gene*) (count (:gene (first children))))))
 	    (testing "Size of the gene from the second child"
-	      (is (== 13 (count (:gene (last children))))))
+	      (is (== (count chromosome/*target-gene*) (count (:gene (last children))))))
 	    (testing "Mating results from the first child"
 	      (loop [g-idx 0] ; Check the first child
 	        (when (< g-idx (count (:gene c1)))
 		      (if (< g-idx pivot)
-		        (is (== (int (get (:gene c1) g-idx)) (int (get (:gene (first children)) g-idx))))
-			    (is (== (int (get (:gene c2) g-idx)) (int (get (:gene (first children)) g-idx)))))
+		        (is (= (get (:gene c1) g-idx) (get (:gene (first children)) g-idx)))
+			    (is (= (get (:gene c2) g-idx) (get (:gene (first children)) g-idx))))
 		      (recur (inc g-idx)))))
 	    (testing "Mating results from the second child"
 	      (loop [g-idx 0] ; Check the second child
 	        (when (< g-idx (count (:gene c2)))
 		      (if (< g-idx pivot)
-		        (is (== (int (get (:gene c2) g-idx)) (int (get (:gene (second children)) g-idx))))
-			    (is (== (int (get (:gene c1) g-idx)) (int (get (:gene (second children)) g-idx)))))
+		        (is (= (get (:gene c2) g-idx) (get (:gene (second children)) g-idx)))
+			    (is (= (get (:gene c1) g-idx) (get (:gene (second children)) g-idx))))
 		      (recur (inc g-idx)))))))))

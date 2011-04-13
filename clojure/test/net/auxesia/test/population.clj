@@ -29,35 +29,35 @@
     (let [p1 (population/generate 1024 0.8 0.1 0.05)
 		  p2 (population/generate 1024 0.0 0.1 0.05)
 		  p3 (population/generate 1024 1.0 0.1 0.05)]
-	  (is (= 80 (int (* 100 (:crossover p1)))))
-	  (is (= 0 (int (* 100 (:crossover p2)))))
-	  (is (= 100 (int (* 100 (:crossover p3))))))))
+	  (is (== 80 (int (* 100 (:crossover p1)))))
+	  (is (== 0 (int (* 100 (:crossover p2)))))
+	  (is (== 100 (int (* 100 (:crossover p3))))))))
 
 (deftest test-elitism
   (testing "elitism property"
     (let [p1 (population/generate 1024 0.8 0.1 0.05)
 		  p2 (population/generate 1024 0.8 0.0 0.05)
 		  p3 (population/generate 1024 0.8 0.99 0.05)]
-	  (is (= 10 (int (* 100 (:elitism p1)))))
-	  (is (= 0 (int (* 100 (:elitism p2)))))
-	  (is (= 99 (int (* 100 (:elitism p3))))))))
+	  (is (== 10 (int (* 100 (:elitism p1)))))
+	  (is (== 0 (int (* 100 (:elitism p2)))))
+	  (is (== 99 (int (* 100 (:elitism p3))))))))
 	  
 (deftest test-mutation
   (testing "mutation property"
     (let [p1 (population/generate 1024 0.8 0.1 0.05)
 		  p2 (population/generate 1024 0.8 0.1 0.0)
 		  p3 (population/generate 1024 0.8 0.1 1.0)]
-	  (is (= 5 (int (* 100 (:mutation p1)))))
-	  (is (= 0 (int (* 100 (:mutation p2)))))
-	  (is (= 100 (int (* 100 (:mutation p3))))))))
+	  (is (== 5 (int (* 100 (:mutation p1)))))
+	  (is (== 0 (int (* 100 (:mutation p2)))))
+	  (is (== 100 (int (* 100 (:mutation p3))))))))
 
 (deftest test-population
   (testing "population property"
     (let [p (population/generate 1024 0.8 0.1 0.5)
 		  c (vec (sort-by #(:fitness %) (:population p)))]
 	  (testing "population size"
-	    (is (= 1024 (count (:population p))))
-		(is (= 1024 (count c))))
+	    (is (== 1024 (count (:population p))))
+		(is (== 1024 (count c))))
 	  (testing "The population is actually sorted"
 	    (loop [idx (int 0)]
 		  (when (< (count c) idx)
@@ -71,10 +71,10 @@
 	      p2 (population/evolve p1)
 		  elitism (int (Math/round (* (count (:population p1)) (:elitism p1))))]
 	  (testing "to ensure the population properties were carried through an evolution"
-	    (is (= (:crossover p1) (:crossover p2)))
-		(is (= (:elitism p1) (:elitism p2)))
-		(is (= (:mutation p1) (:mutation p2)))
-		(is (= (count (:population p1)) (count (:population p2)))))
+	    (is (== (:crossover p1) (:crossover p2)))
+		(is (== (:elitism p1) (:elitism p2)))
+		(is (== (:mutation p1) (:mutation p2)))
+		(is (== (count (:population p1)) (count (:population p2)))))
 	  (testing "to ensure the proper elitism took place"
 	    ;; Store the values for p2 into a map
 		(let [elitism-map (zipmap (:population p2) (repeat (count (:population p2)) 1))]
