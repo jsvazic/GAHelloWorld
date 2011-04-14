@@ -1,5 +1,3 @@
-package net.auxesia
-
 /*
  * The MIT License
  * 
@@ -24,6 +22,40 @@ package net.auxesia
  * THE SOFTWARE.
  */
 
-class Chromosome(gene: String) {
+package net.auxesia
+
+import scala.math.abs
+import scala.util.Random
+
+class Chromosome private(val gene: String, val fitness: Int) {
+	def mutate(): Chromosome = {
+		val pivot = Random.nextInt(gene.length)
+		Chromosome(gene.substring(0, pivot)+ (Random.nextInt(90) + 32).toChar 
+				+ gene.substring(pivot + 1))
+	}
 	
+	def mate(other: Chromosome): Array[Chromosome] = {
+		val arr = new Array[Chromosome](2)
+		val pivot = Random.nextInt(gene.length)
+		arr(0) = Chromosome(gene.substring(0, pivot) + other.gene.substring(pivot))
+		arr(1) = Chromosome(other.gene.substring(0, pivot) + gene.substring(pivot))		
+		return arr
+	}
+}
+
+object Chromosome {
+	def apply(gene: String) = new Chromosome(gene, calcFitness(gene))
+	private val TARGET_GENE = "Hello, world!"
+
+	private def calcFitness(gene: String): Int = {
+		var f = 0
+		for ((a, b) <- gene zip TARGET_GENE) f += abs(a.intValue - b.intValue)
+		return f
+	}	
+	
+	def generateRandom(): Chromosome = {
+		var g = ""
+		for (i <- 1 to TARGET_GENE.length) g += (Random.nextInt(90) + 32).toChar
+		apply(g)
+	}
 }
