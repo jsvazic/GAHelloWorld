@@ -32,7 +32,7 @@
 
 (defn generate
   "Function to generate a new population with a given size,
-   crossover rate, elitisim rate and mutation rate."
+   crossover rate, elitism rate and mutation rate."
   [size crossover elitism mutation]
   (let [p (sort-by #(:fitness %) (repeatedly size chromosome/generate))]
     (Population. crossover elitism mutation (vec p))))

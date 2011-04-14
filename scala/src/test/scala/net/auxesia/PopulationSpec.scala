@@ -24,6 +24,7 @@
 package net.auxesia
 
 import scala.collection.immutable.List
+import scala.math.round
 import org.scalatest.WordSpec
 import org.scalatest.matchers.MustMatchers
 
@@ -87,7 +88,7 @@ class PopulationSpec extends WordSpec with MustMatchers {
         }
       }
 
-      counter must be >= Math.round(pop.population.length * pop.elitism)
+      counter must be >= round(pop.population.length * pop.elitism)
       counter must be < pop.population.length
     }
   }
