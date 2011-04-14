@@ -23,20 +23,27 @@
  */
 package net.auxesia
 
-class Population private (val population: List[Chromosome], val crossover: Float, val elitisim: Float, val mutation: Float) {
+import scala.collection.immutable.List
 
+class Population private (private var _population: List[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
+	def population = _population
+	
+	def evolve(): Unit = {
+		
+	}
 }
 
 object Population {
-	def apply(size: Int, crossover: Float, elitisim: Float, mutation: Float) = {
-		new Population(generateInitialPopulation(size), crossover, elitisim, mutation)
+	def apply(size: Int, crossover: Float, elitism: Float, mutation: Float) = {
+		new Population(generateInitialPopulation(size), crossover, elitism, mutation)
 	}
 	
 	private def generateInitialPopulation(size: Int): List[Chromosome] = {
-		val population = List[Chromosome]()
+		var pop = List[Chromosome]()
 		for (i <- 1 to size) {
-			Chromosome.generateRandom :: population
+			pop = Chromosome.generateRandom :: pop
 		}
-		return population
+
+		return pop.sortWith((s, t) => s.fitness < t.fitness)
 	}
 }

@@ -22,6 +22,8 @@
  * THE SOFTWARE.
  */
 package net.auxesia
+
+import scala.collection.immutable.List
 import org.scalatest.WordSpec
 import org.scalatest.matchers.MustMatchers
 
@@ -43,9 +45,9 @@ class PopulationSpec extends WordSpec with MustMatchers {
       val p2 = Population(1024, 0.8f, 0.0f, 0.05f)
       val p3 = Population(1024, 0.8f, 0.99f, 0.05f)
 
-      (p1.elitisim * 100).intValue must be === 10
-      (p2.elitisim * 100).intValue must be === 0
-      (p3.elitisim * 100).intValue must be === 99
+      (p1.elitism * 100).intValue must be === 10
+      (p2.elitism * 100).intValue must be === 0
+      (p3.elitism * 100).intValue must be === 99
     }
 
     "provide a valid value for the mutation ratio" in {
@@ -53,24 +55,40 @@ class PopulationSpec extends WordSpec with MustMatchers {
       val p2 = Population(1024, 0.8f, 0.1f, 0.0f)
       val p3 = Population(1024, 0.8f, 0.1f, 1.0f)
 
-      (p1.mutation * 100).intValue must be === 50
+      (p1.mutation * 100).intValue must be === 5
       (p2.mutation * 100).intValue must be === 0
       (p3.mutation * 100).intValue must be === 100
     }
 
     "provide a valid initial population" in {
-		val pop = Population(1024, 0.8f, 0.1f, 0.05f)
-		pop.population.length must be === 1024
+      val pop = Population(1024, 0.8f, 0.1f, 0.05f)
+      pop.population must have length (1024)
 
-		/*
-		Chromosome[] newArr = new Chromosome[arr.length];
-		System.arraycopy(arr, 0, newArr, 0, newArr.length);
-		Arrays.sort(newArr);
-		
-		// Assert that the array is actually sorted.
-		assertArrayEquals(arr, newArr);
-    	*/
+      val list = (pop.population ::: List()).sortWith((s, t) => s.fitness < t.fitness)
+      list must have length (1024)
+      list.sameElements(pop.population) must be === true
     }
-    "be able to evlove successfully" is (pending)
+
+    "be able to evlove successfully" in {
+      val pop = Population(1024, 0.8f, 0.1f, 0.05f)
+      val list = pop.population ::: List()
+
+      pop.evolve
+      pop.population must have length (1024)
+
+      (pop.crossover * 100).intValue must be === 80
+      (pop.elitism * 100).intValue must be === 10
+      (pop.mutation * 100).intValue must be === 5
+
+      var counter = 0
+      for (ch <- list) {
+        if (pop.population contains ch) {
+          counter += 1
+        }
+      }
+
+      counter must be >= Math.round(pop.population.length * pop.elitism)
+      counter must be < pop.population.length
+    }
   }
 }
