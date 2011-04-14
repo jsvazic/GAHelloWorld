@@ -50,17 +50,13 @@ object GAHelloWorld {
     // Start evolving the population, stopping when the maximum number of
     // generations is reached, or when we find a solution.
 
-    def generateBest(generation: Int): Unit = {
-      if (pop.population(0).fitness == 0 || generation >= maxGenerations) {
-        println("Generation " + generation + ": " + pop.population(0).gene)
-      } else {
-        println("Generation " + generation + ": " + pop.population(0).gene)
-        pop.evolve()
-        generateBest(generation + 1)
-      }
+    var generation = 1;
+    while (generation <= maxGenerations && pop.population(0).fitness != 0) {
+      println("Generation " + generation + ": " + pop.population(0).gene)
+      pop.evolve()
+      generation += 1
     }
-
-    // Print out some information to the console.
-    generateBest(1)
+    
+    println("Generation " + generation + ": " + pop.population(0).gene)
   }
 }
