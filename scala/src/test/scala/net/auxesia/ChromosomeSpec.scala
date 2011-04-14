@@ -29,82 +29,72 @@ import org.scalatest.matchers.MustMatchers
 class ChromosomeSpec extends WordSpec with MustMatchers {
   "A Chromosome" should {
     "provide a valid fitness for known genes" in {
-    	val c1 = Chromosome("Hello, world!")
-    	val c2 = Chromosome("H5p&J;!l<X\\7l")
-		val c3 = Chromosome("Vc;fx#QRP8V\\$")
-		val c4 = Chromosome("t\\O`E_Jx$n=NF")
+      val c1 = Chromosome("Hello, world!")
+      val c2 = Chromosome("H5p&J;!l<X\\7l")
+      val c3 = Chromosome("Vc;fx#QRP8V\\$")
+      val c4 = Chromosome("t\\O`E_Jx$n=NF")
 
-    	c1.fitness must be === 0
-		c2.fitness must be === 399
-		c3.fitness must be === 297
-		c4.fitness must be === 415
+      c1.fitness must be === 0
+      c2.fitness must be === 399
+      c3.fitness must be === 297
+      c4.fitness must be === 415
     }
 
     "be able to generate a valid random instance of itself" in {
-		for (i <- 1 to 1000) {
-			var c = Chromosome.generateRandom
-			c.fitness must be >= 0
-			c.gene.length must be === 13
-			for (ch <- c.gene) {
-				ch.intValue must be >= 32
-				ch.intValue must be <= 121
-			}
-		}
+      for (i <- 1 to 1000) {
+        var c = Chromosome.generateRandom
+        c.fitness must be >= 0
+        c.gene.length must be === 13
+        for (ch <- c.gene) {
+          ch.intValue must be >= 32
+          ch.intValue must be <= 121
+        }
+      }
     }
 
     "mutate no more than one element of its gene" in {
-		for (i <- 1 to 1000) {
-			val c1 = Chromosome.generateRandom
-			val c2 = c1.mutate
-			c1.gene.length must be === c2.gene.length
-			
-			var diff = 0
-			for ((a, b) <- c1.gene zip c2.gene) if (a != b) diff += 1
-			diff must be <= 1
-		}
+      for (i <- 1 to 1000) {
+        val c1 = Chromosome.generateRandom
+        val c2 = c1.mutate
+        c1.gene.length must be === c2.gene.length
+
+        var diff = 0
+        for ((a, b) <- c1.gene zip c2.gene) if (a != b) diff += 1
+        diff must be <= 1
+      }
     }
 
     "be able to mate correctly with another Chromosome" in {
-    	val c1 = Chromosome.generateRandom
-		val c2 = Chromosome.generateRandom
+      val c1 = Chromosome.generateRandom
+      val c2 = Chromosome.generateRandom
 
-		// Check to ensure the right number of children are returned.
-		val children = c1.mate(c2)
-		children.length must be === 2
+      // Check to ensure the right number of children are returned.
+      val children = c1.mate(c2)
+      children.length must be === 2
 
-		// Check the resulting child gene lengths
-		children(0).gene.length must be === 13
-		children(1).gene.length must be === 13
-		
-    	// Determine the pivot point for the mating
-		var pivot = -1
-		for (((a, b), idx) <- c1.gene zip children(0).gene zip (0 to c1.gene.length - 1)) {
-			if (pivot < 0 && a != b) pivot = idx
-		}
-    	
-    	pivot must be < c1.gene.length
-		    	
-		// Check the first child.
-		for (idx <- 0 to c1.gene.length - 1) {
-			if (idx < pivot) c1.gene(idx) must be === children(0).gene(idx)
-			else c2.gene(idx) must be === children(0).gene(idx)
-		}
-		
-		// Check the second child.
-		for (idx <- 0 to children(1).gene.length - 1) {
-			if (idx < pivot) c2.gene(idx) must be === children(1).gene(idx)
-			else c1.gene(idx) must be === children(1).gene(idx)
-		}
+      // Check the resulting child gene lengths
+      children(0).gene.length must be === 13
+      children(1).gene.length must be === 13
+
+      // Determine the pivot point for the mating
+      var pivot = -1
+      for (((a, b), idx) <- c1.gene zip children(0).gene zip (0 to c1.gene.length - 1)) {
+        if (pivot < 0 && a != b) pivot = idx
+      }
+
+      pivot must be < c1.gene.length
+
+      // Check the first child.
+      for (idx <- 0 to c1.gene.length - 1) {
+        if (idx < pivot) c1.gene(idx) must be === children(0).gene(idx)
+        else c2.gene(idx) must be === children(0).gene(idx)
+      }
+
+      // Check the second child.
+      for (idx <- 0 to children(1).gene.length - 1) {
+        if (idx < pivot) c2.gene(idx) must be === children(1).gene(idx)
+        else c1.gene(idx) must be === children(1).gene(idx)
+      }
     }
-
-    "provide a valid value when compared to other Chromosomes" is (pending)
-
-    "be equal to itself and equal Chromosomes" is (pending)
-
-    "not be equal to non-equal Chromsomes" is (pending)
-
-    "not be equal to non-Chromsome instances" is (pending)
-
-    "not be equal to null instances" is (pending)
   }
 }
