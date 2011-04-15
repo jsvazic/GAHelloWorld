@@ -52,7 +52,7 @@ class Population private (private var _population: List[Chromosome], val crossov
 	 * Method used to evolve a new generation for the population.  This method
 	 * modifies the internal population represented by this class.
 	 */
-	def evolve(): Unit = {
+	def evolve = {
 		// Create a buffer for the new generation
 		val popSize = _population.length
 		val elitismCount = round(popSize * elitism)
@@ -60,10 +60,10 @@ class Population private (private var _population: List[Chromosome], val crossov
 		val rest = _population.takeRight(popSize - elitismCount)
 		
 		def randomMutate(ch: Chromosome): Chromosome = {
-			if (Random.nextFloat() <= mutation) ch.mutate() else ch
+			if (Random.nextFloat() <= mutation) ch.mutate else ch
 		}
 		
-		def selectParents(): Array[Chromosome] = {
+		def selectParents: Array[Chromosome] = {
 			val tournamentSize = 3
 			val parents = new Array[Chromosome](2)
 	

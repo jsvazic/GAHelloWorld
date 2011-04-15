@@ -53,7 +53,7 @@ object GAHelloWorld {
     var generation = 1;
     while (generation <= maxGenerations && pop.population(0).fitness != 0) {
       println("Generation " + generation + ": " + pop.population(0).gene)
-      pop.evolve()
+      pop.evolve
       generation += 1
     }
     

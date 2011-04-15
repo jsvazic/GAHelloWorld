@@ -47,7 +47,7 @@ class Chromosome private (val gene: String, val fitness: Int) {
    * @return A new [[net.auxesia.Chromosome]] with one character replaced
    * in the original gene.
    */
-  def mutate(): Chromosome = {
+  def mutate: Chromosome = {
     val pivot = Random.nextInt(gene.length)
     Chromosome(gene.substring(0, pivot) + (Random.nextInt(90) + 32).toChar
       + gene.substring(pivot + 1))
@@ -101,7 +101,7 @@ object Chromosome {
    * 
    * @return A [[net.auxesia.Chromosome]] instance with a random, valid gene.
    */
-  def generateRandom(): Chromosome = {
+  def generateRandom: Chromosome = {
     var g = ""
     for (i <- 1 to TARGET_GENE.length) g += (Random.nextInt(90) + 32).toChar
     Chromosome(g)
