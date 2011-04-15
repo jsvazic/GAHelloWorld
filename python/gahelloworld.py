@@ -166,7 +166,7 @@ class Population(object):
                     buf.append(self.population[idx].mutate())
                 else:
                     buf.append(self.population[idx])
-                ++idx
+                idx += 1
         
         self.population = list(sorted(buf[0:size], key=lambda x: x.fitness))
 
