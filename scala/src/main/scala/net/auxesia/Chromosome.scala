@@ -48,9 +48,9 @@ class Chromosome private (val gene: String, val fitness: Int) {
    * in the original gene.
    */
   def mutate: Chromosome = {
-    val pivot = Random.nextInt(gene.length)
-    Chromosome(gene.substring(0, pivot) + (Random.nextInt(90) + 32).toChar
-      + gene.substring(pivot + 1))
+    var arr = gene.toArray
+    arr(Random.nextInt(gene.length)) = (Random.nextInt(90) + 32).toChar
+    Chromosome(arr.mkString)
   }
 
   /**
