@@ -8,10 +8,10 @@ example!
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, using Java, Clojure, Scala and Python.  The programs 
-themselves are really quite simple, and more complex topics like crossover 
-selection using roulette wheel algorithms, insertion/deletion mutation, etc, 
-have not been included.
+of genetic algorithms, using Java, Clojure, Common Lisp, Scala and Python.  The 
+programs themselves are really quite simple, and more complex topics like 
+crossover selection using roulette wheel algorithms, insertion/deletion 
+mutation, etc, have not been included.
 
 ### History
 
@@ -80,13 +80,13 @@ The mutate() function will randomly replace one character in the given gene.
 The mate() function will take another chromosome instance and return two new
 chromosome instances.  The algorithm is as follows:
 
-1. Select a random pivot point for the genes.
-2. For the first child, select the first n < pivot characters from the first 
-   parent, then the remaining pivot <= length characters from the second 
-   parent.
-3. For the second child, repeate the same process, but use the first n < pivot
-   characters from the second parent and the remaining characters from the
-   first parent.
+1.  Select a random pivot point for the genes.
+2.  For the first child, select the first n < pivot characters from the first 
+    parent, then the remaining pivot <= length characters from the second 
+    parent.
+3.  For the second child, repeate the same process, but use the first n < pivot
+    characters from the second parent and the remaining characters from the
+    first parent.
 
 ### Driver
 
@@ -99,10 +99,15 @@ Depending on the implementation, this code may reside in its own source file.
    
 ## Usage
 
-Take a look at the README files in [Java](GAHelloWorld/tree/master/java), 
-[Clojure](GAHelloWorld/tree/master/clojure),
-[Scala](GAHelloWorld/tree/master/scala) and
-[Python](GAHelloWorld/tree/master/python) for the specifics for each language.
+Take a look at the README files in:
+
+*   [Java](GAHelloWorld/tree/master/java)
+*   [Clojure](GAHelloWorld/tree/master/clojure)
+*   [Common Lisp](GAHelloWorld/tree/master/common-lisp)
+*   [Scala](GAHelloWorld/tree/master/scala)
+*   [Python](GAHelloWorld/tree/master/python)
+
+for the specifics for each language.
 
 ### Unit tests
 
