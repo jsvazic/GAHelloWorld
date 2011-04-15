@@ -45,11 +45,11 @@ class Chromosome(object):
     result in a new chromosome instance being created.
     """
 
-    __target_gene = "Hello, world!"
+    _target_gene = "Hello, world!"
     
     def __init__(self, gene):
         self.gene = gene
-        self.fitness = Chromosome.__update_fitness(gene)
+        self.fitness = Chromosome._update_fitness(gene)
     
     def mate(self, mate):
         """
@@ -76,13 +76,13 @@ class Chromosome(object):
         return Chromosome(''.join(gene))
 
     @staticmethod            
-    def __update_fitness(gene):
+    def _update_fitness(gene):
         """
         Helper method used to return the fitness for the chromosome based
         on its gene.
         """
         fitness = 0
-        for a, b in zip(gene, Chromosome.__target_gene):
+        for a, b in zip(gene, Chromosome._target_gene):
             fitness += abs(ord(a) - ord(b))
             
         return fitness
@@ -94,7 +94,7 @@ class Chromosome(object):
         gene.
         """
         gene = []
-        for x in range(len(Chromosome.__target_gene)):
+        for x in range(len(Chromosome._target_gene)):
             gene.append(chr(randint(0, 89) + 32))
                 
         return Chromosome(''.join(gene))
@@ -112,7 +112,7 @@ class Population(object):
     method will generate a new collection of chromosome objects.
     """
     
-    __tournamentSize = 3
+    _tournamentSize = 3
     
     def __init__(self, size=1024, crossover=0.8, elitism=0.1, mutation=0.03):
         self.elitism = elitism
@@ -123,25 +123,25 @@ class Population(object):
         for i in range(size): buf.append(Chromosome.gen_random())
         self.population = list(sorted(buf, key=lambda x: x.fitness))
                         
-    def __tournament_selection(self):
+    def _tournament_selection(self):
         """
         A helper method used to select a random chromosome from the 
         population using a tournament selection algorithm.
         """
         best = self.population[randint(0, len(self.population) - 1)]
-        for i in range(Population.__tournamentSize):
+        for i in range(Population._tournamentSize):
             cont = self.population[randint(0, len(self.population) - 1)]
             if (cont.fitness < best.fitness): best = cont
                     
         return best
 
-    def __selectParents(self):
+    def _selectParents(self):
         """
         A helper method used to select two parents from the population using a
         tournament selection algorithm.
         """
                     
-        return (self.__tournament_selection(), self.__tournament_selection())
+        return (self._tournament_selection(), self._tournament_selection())
         
     def evolve(self):
         """
@@ -153,7 +153,7 @@ class Population(object):
         
         while (idx < size):
             if random() <= self.crossover:
-                (p1, p2) = self.__selectParents()
+                (p1, p2) = self._selectParents()
                 children = p1.mate(p2)
                 for c in children:
                     if random() <= self.mutation:
