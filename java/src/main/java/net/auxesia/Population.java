@@ -150,7 +150,7 @@ public class Population {
 		Chromosome[] arr = new Chromosome[popArr.length];
 		System.arraycopy(popArr, 0, arr, 0, popArr.length);
 		
-		return popArr;
+		return arr;
 	}
 	
 	/**
