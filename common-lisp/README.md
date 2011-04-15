@@ -27,9 +27,20 @@ the following command from a shell (assuming `clisp`, `ecl` or `sbcl`
 is on your system path):
 
 - CCL: my old 1.4 version fails, don't know why
-- CLISP: `clisp ga-hello-world.lisp`
-- ECL: `ecl -l ga-hello-world.lisp`
-- SBCL: `sbcl --script ga-hello-world.lisp` or `sbcl --load ga-hello-world.lisp` for really old versions
+- CLISP: `clisp -i ga-hello-world.lisp -x "(progn (main) (quit))"`
+- ECL: `ecl -l ga-hello-world.lisp -eval "(progn (main) (quit))"`
+- SBCL: `sbcl --load ga-hello-world.lisp --eval "(progn (main) (quit))"`
+
+The more 'Lispy' way would be just starting you CL implementation and
+issuing `(load "ga-hello-world.lisp")` and then calling the MAIN
+function.
+
+To run the tests you need the `lisp-unit` package.  To run them from
+the commandline issue:
+
+- CLISP: `clisp -i ga-hello-world-tests.lisp`
+- ECL: `ecl -l ga-hello-world-tests.lisp`
+- SBCL: `sbcl --load ga-hello-world-tests.lisp`
 
 ## Copyright and License
 

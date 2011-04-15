@@ -43,7 +43,7 @@
 ;;; Classes
 
 (defclass chromosome ()
-  ((target :reader target :initarg :target :initform "Hello, World!")
+  ((target :reader target :initarg :target :initform "Hello, world!")
    (gene :reader gene :initarg :gene :initform (random-gene 13))
    (fitness :reader fitness :initarg :fitness :initform 1))
   (:documentation "This class is used to define a chromosome for the genetic algorithm
@@ -82,20 +82,20 @@
         finally (return (coerce result 'string))))
 
 
-(defun make-chromosome (&optional (target "Hello, World!") (gene nil))
+(defun make-chromosome (&optional (target "Hello, world!") (gene nil))
   "Returns an instance of the CHROMOSOME class.  If GENE is nil a gene
   will be created using RANDOM-GENE."
   (let ((new-gene (if gene gene (random-gene (length target)))))
     (make-instance 'chromosome :target target :gene new-gene)))
 
 
-(defun make-population (&key (size 2048) (target "Hello, World!")
+(defun make-population (&key (size 2048) (target "Hello, world!")
                              (crossover 0.8) (elitism 0.1) (mutation 0.3))
   "Returns an instance of the POPULATION class."
   (let ((chromosomes (loop repeat size
                            collect (make-chromosome target) into result
                            finally (return (sort result (lambda (a b)
-                                                          (> (fitness a)
+                                                          (< (fitness a)
                                                              (fitness b))))))))
     (make-instance 'population :size size :crossover crossover :elitism elitism
                                :mutation mutation :chromosomes chromosomes)))
@@ -195,6 +195,7 @@
 ;;; Main Program
 
 (defun main (&optional (max-generations 16384))
+  (setf *random-state* (make-random-state t))
   (let ((p (make-population :size 2048 :crossover 0.8 :elitism 0.1
                             :mutation 0.3)))
     (loop for g from 0 to max-generations
@@ -207,10 +208,3 @@
           finally (unless (= fitness 0)
                     (format t (mkstr "Maximum generations reached without "
                                      "success.~%"))))))
-
-
-;; Make RANDOM non-deterministic, start and quit when called from the
-;; commandline.
-(setf *random-state* (make-random-state t))
-(main)
-(quit)
