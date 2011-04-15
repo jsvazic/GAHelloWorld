@@ -48,23 +48,9 @@ class Chromosome(object):
     __target_gene = "Hello, world!"
     
     def __init__(self, gene):
-        self._gene = gene
-        self._fitness = Chromosome._update_fitness(gene)
+        self.gene = gene
+        self.fitness = Chromosome.__update_fitness(gene)
     
-    @property
-    def gene(self):
-        """
-        Method used to retrieve the gene for the chromosome.
-        """
-        return self._gene
-
-    @property        
-    def fitness(self):
-        """
-        Method used to retrieve the fitness value of the chromosome.
-        """
-        return self._fitness
-        
     def mate(self, mate):
         """
         Method used to mate the chromosome with another chromosome, 
@@ -90,7 +76,7 @@ class Chromosome(object):
         return Chromosome(''.join(gene))
 
     @staticmethod            
-    def _update_fitness(gene):
+    def __update_fitness(gene):
         """
         Helper method used to return the fitness for the chromosome based
         on its gene.
@@ -129,9 +115,9 @@ class Population(object):
     __tournamentSize = 3
     
     def __init__(self, size=1024, crossover=0.8, elitism=0.1, mutation=0.03):
-        self._elitism = elitism
-        self._mutation = mutation
-        self._crossover = crossover
+        self.elitism = elitism
+        self.mutation = mutation
+        self.crossover = crossover
         
         buf = []
         for i in range(size): buf.append(Chromosome.gen_random())
@@ -145,27 +131,6 @@ class Population(object):
         a direct reference to the collection.
         """
         return self._population[:]
-
-    @property        
-    def elitism(self):
-        """
-        Method to retrieve the elitism rate of the population.
-        """
-        return self._elitism
-
-    @property
-    def mutation(self):
-        """
-        Method to retrieve the mutation rate of the population.
-        """
-        return self._mutation
-
-    @property    
-    def crossover(self):
-        """
-        Method to retrieve the crossover rate of the population.
-        """
-        return self._crossover
                     
     def __tournament_selection(self):
         """
@@ -192,21 +157,21 @@ class Population(object):
         Method to evolve the population of chromosomes.
         """
         size = len(self._population)
-        idx = int(round(size * self._elitism))
+        idx = int(round(size * self.elitism))
         buf = self._population[0:idx]
         
         while (idx < size):
-            if random() <= self._crossover:
+            if random() <= self.crossover:
                 (p1, p2) = self.__selectParents()
                 children = p1.mate(p2)
                 for c in children:
-                    if random() <= self._mutation:
+                    if random() <= self.mutation:
                         buf.append(c.mutate())
                     else:
                         buf.append(c)
                 idx += 2
             else:
-                if random() <= self._mutation:
+                if random() <= self.mutation:
                     buf.append(self._population[idx].mutate())
                 else:
                     buf.append(self._population[idx])
@@ -221,6 +186,6 @@ if __name__ == "__main__":
 	for i in range(1, maxGenerations + 1):
 		print("Generation %d: %s" % (i, pop.population[0].gene))
 		if pop.population[0].fitness == 0: break
-		else: pop.evolve()
+		else:pop.evolve()
 	else:
 		print("Maximum generations reached without success.")
