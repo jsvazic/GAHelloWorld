@@ -28,9 +28,30 @@ import scala.collection.immutable.List
 import scala.math.round
 import scala.util.Random
 
+/**
+ * Class defining a genetic algorithm population for the "Hello, world!" 
+ * simulation.
+ * 
+ * @author John Svazic
+ * @constructor Create a new population with an initial population defined, 
+ * along with specific crossover, elitism and mutation rates.
+ * @param _population The list of [[net.auxesia.Chromosome]] objects 
+ * representing the population.
+ * @param crossover The crossover ratio.
+ * @param elitism The elitism ratio.
+ * @param mutation The mutation ratio.
+ */
 class Population private (private var _population: List[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
+	/**
+	 * A public accessor for the underlying list of [[net.auxesia.Chromosome]]
+	 * objects.
+	 */
 	def population = _population
 	
+	/**
+	 * Method used to evolve a new generation for the population.  This method
+	 * modifies the internal population represented by this class.
+	 */
 	def evolve(): Unit = {
 		// Create a buffer for the new generation
 		val popSize = _population.length
@@ -38,8 +59,26 @@ class Population private (private var _population: List[Chromosome], val crossov
 		var buffer = _population.take(elitismCount)
 		val rest = _population.takeRight(popSize - elitismCount)
 		
-		def randomMutate(ch: Chromosome) = {
+		def randomMutate(ch: Chromosome): Chromosome = {
 			if (Random.nextFloat() <= mutation) ch.mutate() else ch
+		}
+		
+		def selectParents(): Array[Chromosome] = {
+			val tournamentSize = 3
+			val parents = new Array[Chromosome](2)
+	
+			// Randomly select two parents via tournament selection.
+			for (i <- 0 to 1) {
+				parents(i) = _population(Random.nextInt(_population.length))
+				for (j <- 1 to tournamentSize) {
+					val idx = Random.nextInt(_population.length)
+					if (_population(idx).fitness < parents(i).fitness) {
+						parents(i) = _population(idx)
+					}
+				}
+			}
+			
+			return parents			
 		}
 		
 		for (ch <- rest) {
@@ -56,37 +95,45 @@ class Population private (private var _population: List[Chromosome], val crossov
 		}
 
 		_population = buffer.sortWith((s, t) => s.fitness < t.fitness).take(popSize)
-	}
-	
-	private def selectParents(): Array[Chromosome] = {
-		val parents = new Array[Chromosome](2)
-
-		// Randomly select two parents via tournament selection.
-		for (i <- 0 to 1) {
-			parents(i) = _population(Random.nextInt(_population.length))
-			for (j <- 1 to 3) {
-				val idx = Random.nextInt(_population.length)
-				if (_population(idx).fitness < parents(i).fitness) {
-					parents(i) = _population(idx)
-				}
-			}
-		}
-		
-		return parents
-	}
+	}	
 }
 
+/**
+ * Factory for [[net.auxesia.Population]] instances.
+ */
 object Population {
+	/**
+	 * Create a [[net.auxesia.Population]] with a given size, crossover ratio, elitism ratio
+	 * and mutation ratio.
+	 * 
+	 * @param size The size of the population.
+	 * @param crossover The crossover ratio for the population.
+	 * @param elitism The elitism ratio for the population.
+	 * @param mutation The mutation ratio for the population.
+	 * 
+	 * @return A new [[net.auxesia.Population]] instance with the defined
+	 * parameters and an initialized set of [[net.auxesia.Chromosome]] objects
+	 * representing the population.
+	 */
 	def apply(size: Int, crossover: Float, elitism: Float, mutation: Float) = {
 		new Population(generateInitialPopulation(size), crossover, elitism, mutation)
 	}
 	
+	/**
+	 * Helper method used to generate an initial population of random
+	 * [[net.auxesia.Chromosome]] objects for a given population size.
+	 * 
+	 * @param size The size of the population.
+	 * 
+	 * @return A [[scala.collection.immutable.List]] of the defined size
+	 * populated with random [[net.auxesia.Chromosome]] objects.
+	 */
 	private def generateInitialPopulation(size: Int): List[Chromosome] = {
 		var pop = List[Chromosome]()
 		for (i <- 1 to size) {
 			pop = Chromosome.generateRandom :: pop
 		}
 
-		return pop.sortWith((s, t) => s.fitness < t.fitness)
+		pop.sortWith((s, t) => s.fitness < t.fitness)
 	}
 }

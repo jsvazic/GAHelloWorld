@@ -27,35 +27,83 @@ package net.auxesia
 import scala.math.abs
 import scala.util.Random
 
-class Chromosome private(val gene: String, val fitness: Int) {
-	def mutate(): Chromosome = {
-		val pivot = Random.nextInt(gene.length)
-		Chromosome(gene.substring(0, pivot)+ (Random.nextInt(90) + 32).toChar 
-				+ gene.substring(pivot + 1))
-	}
-	
-	def mate(other: Chromosome): Array[Chromosome] = {
-		val arr = new Array[Chromosome](2)
-		val pivot = Random.nextInt(gene.length)
-		arr(0) = Chromosome(gene.substring(0, pivot) + other.gene.substring(pivot))
-		arr(1) = Chromosome(other.gene.substring(0, pivot) + gene.substring(pivot))		
-		return arr
-	}
+/**
+ * A class representing a chromosome in the "Hello, world!" genetic
+ * algorithm simulation.
+ *
+ * @author John Svazic
+ *
+ * @constructor Creates an instance of [[net.auxesia.Chromosome]].
+ * @param gene The gene representing the chromosome.
+ * @param fitness The fitness of the chromosome.
+ */
+class Chromosome private (val gene: String, val fitness: Int) {
+
+  /**
+   * Method used to mutate the gene of the given chromosome, returning a
+   * new [[net.auxesia.Chromsome]] instance.  Only one character in the
+   * gene is mutated, the rest of the gene remains the same.
+   *
+   * @return A new [[net.auxesia.Chromosome]] with one character replaced
+   * in the original gene.
+   */
+  def mutate(): Chromosome = {
+    val pivot = Random.nextInt(gene.length)
+    Chromosome(gene.substring(0, pivot) + (Random.nextInt(90) + 32).toChar
+      + gene.substring(pivot + 1))
+  }
+
+  /**
+   * Method to mate this [[net.auxesia.Chromosome]] with another, resulting
+   * in two distinct offspring.
+   *
+   * @param other The other [[net.auxesia.Chromosome]] to mate with.
+   *
+   * @return A 2-element array of resuling [[net.auxesia.Chromosome]]
+   * objects created through the mating algorithm.
+   */
+  def mate(other: Chromosome): Array[Chromosome] = {
+    val arr = new Array[Chromosome](2)
+    val pivot = Random.nextInt(gene.length)
+    arr(0) = Chromosome(gene.substring(0, pivot) + other.gene.substring(pivot))
+    arr(1) = Chromosome(other.gene.substring(0, pivot) + gene.substring(pivot))
+    return arr
+  }
 }
 
+/**
+ * A factory object for constructing new [[net.auxesia.Chromosome]] instances.
+ */
 object Chromosome {
-	def apply(gene: String) = new Chromosome(gene, calcFitness(gene))
-	private val TARGET_GENE = "Hello, world!"
+  /** A constant used to determine fitness. */
+  private val TARGET_GENE = "Hello, world!"
 
-	private def calcFitness(gene: String): Int = {
-		var f = 0
-		for ((a, b) <- gene zip TARGET_GENE) f += abs(a.intValue - b.intValue)
-		return f
-	}	
-	
-	def generateRandom(): Chromosome = {
-		var g = ""
-		for (i <- 1 to TARGET_GENE.length) g += (Random.nextInt(90) + 32).toChar
-		apply(g)
-	}
+  /**
+   * Creates new [[net.auxesia.Chromsome]] instances.
+   *
+   * @param gene The gene representing the chromosome.
+   *
+   * @return A new [[net.auxesia.Chromosome]] instance.
+   */
+  def apply(gene: String) = {
+    def calcFitness(gene: String): Int = {
+      var f = 0
+      for ((a, b) <- gene zip TARGET_GENE) f += abs(a.intValue - b.intValue)
+      return f
+    }
+
+    new Chromosome(gene, calcFitness(gene))
+  }
+
+  /**
+   * Helper method used to generate a random [[net.auxesia.Chromosome]]
+   * instance.
+   * 
+   * @return A [[net.auxesia.Chromosome]] instance with a random, valid gene.
+   */
+  def generateRandom(): Chromosome = {
+    var g = ""
+    for (i <- 1 to TARGET_GENE.length) g += (Random.nextInt(90) + 32).toChar
+    Chromosome(g)
+  }
 }
