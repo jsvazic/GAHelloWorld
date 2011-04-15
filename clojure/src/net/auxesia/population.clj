@@ -37,12 +37,6 @@
   (let [p (sort-by #(:fitness %) (repeatedly size chromosome/generate))]
     (Population. crossover elitism mutation (vec p))))
 
-(defn- best-fitness
-  "Function used to retrieve the better of two provided genes based on
-   their fitness."
-  [c1 c2]
-  (if (< (:fitness c1) (:fitness c2)) c1 c2))
-
 (defn- tournament-selection
   "Function to perform a tournament selection to retrieve a random
    chromosome from the given sequence of chromosomes."

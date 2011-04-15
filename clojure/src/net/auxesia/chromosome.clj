@@ -36,13 +36,7 @@
    in the ascii characters for the string compared with the target
    string."
   [v]
-  (let [len (int (count v))
-	target *target-gene*]
-    (loop [fitness (int 0) idx (int 0)]
-	  (if (== idx len)
-	    fitness
-	    (recur (+ fitness (int (Math/abs (- (int (get v idx)) (int (get *target-gene* idx))))))
-		       (inc idx))))))
+  (reduce + (map #(Math/abs (- (int %) (int %2))) v *target-gene*)))
 
 (defn- rand-gene
   "A convenience function that can generate a random gene for a given length."
