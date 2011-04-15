@@ -67,7 +67,9 @@ object GAHelloWorld {
       pop.evolve
       generation += 1
     }
+    val endTime = System.currentTimeMillis
     
     println("Generation " + generation + ": " + pop.population(0).gene)
+    println("Total execution time: " + (endTime - startTime) + "ms")
   }
 }
