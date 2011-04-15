@@ -121,25 +121,16 @@ class Population(object):
         
         buf = []
         for i in range(size): buf.append(Chromosome.gen_random())
-        self._population = list(sorted(buf, key=lambda x: x.fitness))
-    
-    @property
-    def population(self):
-        """
-        Method to retrieve a copy of the population.  Note that this is
-        a copy of the collection of chromosomes in the Populatin object, not
-        a direct reference to the collection.
-        """
-        return self._population[:]
-                    
+        self.population = list(sorted(buf, key=lambda x: x.fitness))
+                        
     def __tournament_selection(self):
         """
         A helper method used to select a random chromosome from the 
         population using a tournament selection algorithm.
         """
-        best = self.population[randint(0, len(self._population) - 1)]
+        best = self.population[randint(0, len(self.population) - 1)]
         for i in range(Population.__tournamentSize):
-            cont = self._population[randint(0, len(self._population) - 1)]
+            cont = self.population[randint(0, len(self.population) - 1)]
             if (cont.fitness < best.fitness): best = cont
                     
         return best
@@ -156,9 +147,9 @@ class Population(object):
         """
         Method to evolve the population of chromosomes.
         """
-        size = len(self._population)
+        size = len(self.population)
         idx = int(round(size * self.elitism))
-        buf = self._population[0:idx]
+        buf = self.population[0:idx]
         
         while (idx < size):
             if random() <= self.crossover:
@@ -172,12 +163,12 @@ class Population(object):
                 idx += 2
             else:
                 if random() <= self.mutation:
-                    buf.append(self._population[idx].mutate())
+                    buf.append(self.population[idx].mutate())
                 else:
-                    buf.append(self._population[idx])
+                    buf.append(self.population[idx])
                 ++idx
         
-        self._population = list(sorted(buf[0:size], key=lambda x: x.fitness))
+        self.population = list(sorted(buf[0:size], key=lambda x: x.fitness))
 
 if __name__ == "__main__":
 	maxGenerations = 16384
