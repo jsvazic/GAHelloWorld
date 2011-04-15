@@ -139,5 +139,6 @@ public class PopulationTest {
 		// Account for the fact that mating/mutation may cause more than
 		// just the fixed number of chromosomes to be identical.
 		assertTrue(counter >= elitismCount);
+		assertTrue(counter < oldArr.length);
 	}
 }

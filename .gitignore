@@ -12,3 +12,4 @@ clojure/pom.xml
 clojure/*jar
 clojure/lib
 clojure/classes
+python/__pycache__/

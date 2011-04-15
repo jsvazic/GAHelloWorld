@@ -8,14 +8,14 @@ example, written in Python.
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, specifically with Python 2.7.  The program itself is 
+of genetic algorithms, specifically with Python 3.2.  The program itself is 
 really simple, and is contained within a single file.
 
 ## Usage
 
 The project is completely self contained. To execute the application, run
-the following command from a shell (assuming that python 2.7+ is on your 
-path):
+the following command from a shell (assuming that python 3.2+ is on your 
+system path):
 
 > python gahelloworld.py
 

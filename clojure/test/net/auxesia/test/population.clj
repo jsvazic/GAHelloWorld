@@ -78,4 +78,5 @@
 	  (testing "to ensure the proper elitism took place"
 	    ;; Store the values for p2 into a map
 		(let [elitism-map (zipmap (:population p2) (repeat (count (:population p2)) 1))]
-		  (is (<= elitism (count (doall (filter #(contains? elitism-map %) (:population p1)))))))))))
+		  (is (<= elitism (count (doall (filter #(contains? elitism-map %) (:population p1))))))
+		  (is (< (count (doall (filter #(contains? elitism-map %) (:population p1)))) (count (:population p1)))))))))

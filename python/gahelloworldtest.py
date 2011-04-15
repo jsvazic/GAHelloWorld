@@ -192,6 +192,7 @@ class PopulationTest(unittest.TestCase):
 		# Account for the fact that mating/mutation may cause more than
 		# just the fixed number of chromosomes to be identical.
 		self.assertTrue(counter >= elitismCount)
+		self.assertTrue(counter < len(oldArr))
 
 if __name__ == '__main__':
     unittest.main()

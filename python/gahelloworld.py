@@ -219,8 +219,8 @@ if __name__ == "__main__":
 	pop = Population(size=2048, crossover=0.8, elitism=0.1, mutation=0.3)
 
 	for i in range(1, maxGenerations + 1):
-		print "Generation %d: %s" % (i, pop.population[0].gene)
+		print("Generation %d: %s" % (i, pop.population[0].gene))
 		if pop.population[0].fitness == 0: break
 		else: pop.evolve()
 	else:
-		print "Maximum generations reached without success."
+		print("Maximum generations reached without success.")
