@@ -23,9 +23,20 @@
  */
 package net.auxesia
 
+/**
+ * Object driver for the genetic algorithm "Hello, world!" simulation.
+ * 
+ * @author John Svazic
+ */
 object GAHelloWorld {
 
+  /**
+   * Main driver function for the simulation.
+   * 
+   * @param args Command-line arguments (ignored).
+   */
   def main(args: Array[String]): Unit = {
+	val startTime = System.currentTimeMillis
     // The size of the simulation population
     val populationSize = 2048
 

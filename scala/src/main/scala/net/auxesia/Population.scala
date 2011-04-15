@@ -24,7 +24,7 @@
 package net.auxesia
 
 import scala.collection.Iterator
-import scala.collection.immutable.List
+import scala.collection.immutable.Vector
 import scala.math.round
 import scala.util.Random
 
@@ -35,15 +35,15 @@ import scala.util.Random
  * @author John Svazic
  * @constructor Create a new population with an initial population defined, 
  * along with specific crossover, elitism and mutation rates.
- * @param _population The list of [[net.auxesia.Chromosome]] objects 
+ * @param _population The vector of [[net.auxesia.Chromosome]] objects 
  * representing the population.
  * @param crossover The crossover ratio.
  * @param elitism The elitism ratio.
  * @param mutation The mutation ratio.
  */
-class Population private (private var _population: List[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
+class Population private (private var _population: Vector[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
 	/**
-	 * A public accessor for the underlying list of [[net.auxesia.Chromosome]]
+	 * A public accessor for the underlying vector of [[net.auxesia.Chromosome]]
 	 * objects.
 	 */
 	def population = _population
@@ -87,10 +87,10 @@ class Population private (private var _population: List[Chromosome], val crossov
 				val parents  = selectParents
 				val children = parents(0).mate(parents(1))
 				
-				buffer = randomMutate(children(0)) :: buffer
-				buffer = randomMutate(children(1)) :: buffer				
+				buffer = randomMutate(children(0)) +: buffer
+				buffer = randomMutate(children(1)) +: buffer				
 			} else {
-				buffer = randomMutate(ch) :: buffer
+				buffer = randomMutate(ch) +: buffer
 			}
 		}
 
@@ -128,10 +128,10 @@ object Population {
 	 * @return A [[scala.collection.immutable.List]] of the defined size
 	 * populated with random [[net.auxesia.Chromosome]] objects.
 	 */
-	private def generateInitialPopulation(size: Int): List[Chromosome] = {
-		var pop = List[Chromosome]()
+	private def generateInitialPopulation(size: Int): Vector[Chromosome] = {
+		var pop = Vector[Chromosome]()
 		for (i <- 1 to size) {
-			pop = Chromosome.generateRandom :: pop
+			pop = Chromosome.generateRandom +: pop
 		}
 
 		pop.sortWith((s, t) => s.fitness < t.fitness)

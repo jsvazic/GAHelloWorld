@@ -65,17 +65,19 @@ class PopulationSpec extends WordSpec with MustMatchers {
       val pop = Population(1024, 0.8f, 0.1f, 0.05f)
       pop.population must have length (1024)
 
-      val list = (pop.population ::: List()).sortWith((s, t) => s.fitness < t.fitness)
+      val list = (Vector() ++ pop.population).sortWith((s, t) => s.fitness < t.fitness)
       list must have length (1024)
       list.sameElements(pop.population) must be === true
     }
 
     "be able to evlove successfully" in {
       val pop = Population(1024, 0.8f, 0.1f, 0.05f)
-      val list = pop.population ::: List()
+      val list = Vector() ++ pop.population
 
+      list must have length (1024)
       pop.evolve
       pop.population must have length (1024)
+      
 
       (pop.crossover * 100).intValue must be === 80
       (pop.elitism * 100).intValue must be === 10
