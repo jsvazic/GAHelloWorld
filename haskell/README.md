@@ -1,39 +1,25 @@
-# Genetic Algorithm Hello World! (Scala Edition)
+# Genetic Algorithm Hello World! (Haskell Edition)
 
 This is a simple project intended to showcase genetic algorithms with a well 
 known example for all new developers; namely the classic "Hello, world!" 
-example, written in Scala (2.8.1).
+example, written in Haskell.
 
 ## Overview
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, specifically with Scala.  The program itself is really 
-simple, and spans 3 classes.  Only two of them do any real interesting work;
-the third one, <i>GAHelloWorld</i>, only exists as a driver for the 
+of genetic algorithms, specifically with Haskell.
+
+Anthony Cowley wrote the implementation, and has an excellent write-up of the
+code [on his blog](http://www.arcadianvisions.com/blog/?p=303).  I suggest 
+checking it out for more detailed information, including how to run the
 application.
-
-## Usage
-
-The project currently uses [SBT](http://code.google.com/p/simple-build-tool/) 
-for the build.  To build it locally, run the following from a shell:
-
-> sbt update package
-
-To execute the simulation, run:
-
-> sbt run
-
-or if you like to have an executable .jar file, change directories to the 
-target/scala_2.8.1 directory and execute:
-
-> java -jar gahelloworld_2.8.1-1.0.jar
 
 ## Copyright and License
 
 The MIT License
 
-Copyright &copy; 2011 John Svazic
+Copyright &copy; 2011 Anthony Cowley
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
