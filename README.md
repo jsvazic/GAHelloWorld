@@ -8,10 +8,11 @@ example!
 
 The application simply "evolves" the string "Hello, world!" from a population 
 of random strings.  It is intended to be a gentle introduction into the world
-of genetic algorithms, using Java, Clojure, Common Lisp, Scala and Python.  The 
-programs themselves are really quite simple, and more complex topics like 
-crossover selection using roulette wheel algorithms, insertion/deletion 
-mutation, etc, have not been included.
+of genetic algorithms, using Java, Clojure, Common Lisp, Haskell,
+Scala, Python and OCaml.  The programs themselves are really quite
+simple, and more complex topics like crossover selection using
+roulette wheel algorithms, insertion/deletion mutation, etc, have not
+been included.
 
 ### History
 
@@ -106,6 +107,7 @@ Take a look at the README files in:
 *   [Common Lisp](GAHelloWorld/tree/master/common-lisp)
 *   [Scala](GAHelloWorld/tree/master/scala)
 *   [Python](GAHelloWorld/tree/master/python)
+*   [OCaml](GAHelloWorld/tree/master/ocaml)
 
 for the specifics for each language.
 
