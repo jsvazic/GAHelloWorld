@@ -1,6 +1,6 @@
 (** Genetic algorithms.
 
-    This module defines a {!GENOME} module type to represent arbitrary genomes,
+    This module defines a {!CHROMOSOME} module type to represent arbitrary genomes,
     an {!Algorithm} functor which allows running a genetic algorithm on that
     genome, and a {!LazyFitness} utility functor for allowing memoization of
     the fitness function.
@@ -30,7 +30,7 @@
 *)
 
 (** A genome, represented as a generic module type. *)
-module type GENOME = sig
+module type CHROMOSOME = sig
 
   (** What a genome is. Expected to be immutable. *)
   type t 
@@ -52,17 +52,17 @@ end
 (** A lazy-evaluation wrapper for genomes: this prevents the fitness
     from being re-computed on every call. 
 *)
-module LazyFitness = functor(Genome:GENOME) -> ( struct
+module LazyFitness = functor(Chromosome:CHROMOSOME) -> ( struct
     
-  type t = { genome : Genome.t ; fitness : int Lazy.t }
+  type t = { genome : Chromosome.t ; fitness : int Lazy.t }
 
-  let wrap inner = { genome = inner ; fitness = lazy (Genome.fitness inner) }
+  let wrap inner = { genome = inner ; fitness = lazy (Chromosome.fitness inner) }
 
-  let mate g1 g2 = wrap (Genome.mate g1.genome g2.genome)
+  let mate g1 g2 = wrap (Chromosome.mate g1.genome g2.genome)
 
-  let mutate g = wrap (Genome.mutate g.genome)
+  let mutate g = wrap (Chromosome.mutate g.genome)
 
-  let random () = wrap (Genome.random ())
+  let random () = wrap (Chromosome.random ())
 
   let fitness g = Lazy.force g.fitness
 
@@ -70,10 +70,10 @@ module LazyFitness = functor(Genome:GENOME) -> ( struct
 
 end : sig
 
-  include GENOME
+  include CHROMOSOME
 
   (** Return the wrapped value. *)
-  val value : t -> Genome.t
+  val value : t -> Chromosome.t
 
 end )
 
@@ -81,7 +81,7 @@ end )
 let by f a b = compare (f a) (f b)
 
 (** Running an algorithm on a given kind genome. *)
-module Algorithm = functor(Genome:GENOME) -> struct      
+module Algorithm = functor(Chromosome:CHROMOSOME) -> struct      
 
   (** Run the algorithm. Returns the list of the best elements in each generation.
       @param tsize Tournament size 
@@ -107,8 +107,8 @@ module Algorithm = functor(Genome:GENOME) -> struct
     in
 
     (* Initial population based on random genomes *)
-    let initial = Array.init psize (fun _ -> Genome.random ()) in
-    Array.sort (by Genome.fitness) initial ;
+    let initial = Array.init psize (fun _ -> Chromosome.random ()) in
+    Array.sort (by Chromosome.fitness) initial ;
 
     (* Evolve a new population based on the previous one *)
     let evolve pop = 
@@ -117,17 +117,17 @@ module Algorithm = functor(Genome:GENOME) -> struct
 
 	  let gene = 
 	    if i >= elitism_bound && Random.float 1.0 <= crossover
-	    then Genome.mate (tselect pop) (tselect pop)
+	    then Chromosome.mate (tselect pop) (tselect pop)
 	    else pop.(i)
 	  in
 
 	  if i >= elitism_bound && Random.float 1.0 <= mutation
-	  then Genome.mutate gene
+	  then Chromosome.mutate gene
 	  else gene
 
       end in
 
-      Array.sort (by Genome.fitness) pop' ; pop'
+      Array.sort (by Chromosome.fitness) pop' ; pop'
 
     in
 
@@ -136,7 +136,7 @@ module Algorithm = functor(Genome:GENOME) -> struct
     *)
     let rec loop generations pop = 
       if generations = 0 then [] else 
-	if Genome.fitness pop.(0) = 0 then [pop.(0)] else
+	if Chromosome.fitness pop.(0) = 0 then [pop.(0)] else
 	  pop.(0) :: loop (generations - 1) (evolve pop)
     in
 
@@ -160,7 +160,7 @@ module HelloWorld = struct
   let target = "Hello, world!"
   let length = String.length target
 
-  let randchar () = Char.chr (Random.int (126-32) + 32)
+  let randchar () = Char.chr (Random.int (121-32) + 32)
 
   let mate g1 g2 = 
     let n = Random.int length in
@@ -186,8 +186,8 @@ module HelloWorld = struct
 
 end
 
-module MyGenome     = LazyFitness(HelloWorld)
-module MyAlgorithm  = Algorithm(MyGenome)
+module MyChromosome     = LazyFitness(HelloWorld)
+module MyAlgorithm  = Algorithm(MyChromosome)
 
 let algorithm = MyAlgorithm.run 
   ~tsize:3
@@ -199,4 +199,4 @@ let algorithm = MyAlgorithm.run
 
 let results = 
   List.iter print_endline
-    (List.map MyGenome.value (algorithm ()))
+    (List.map MyChromosome.value (algorithm ()))
