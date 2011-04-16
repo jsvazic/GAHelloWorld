@@ -76,7 +76,7 @@ class Chromosome private (val gene: String, val fitness: Int) {
  */
 object Chromosome {
   /** A constant used to determine fitness. */
-  private val TARGET_GENE = "Hello, world!"
+  private val TARGET_GENE = "Hello, world!".toCharArray
 
   /**
    * Creates new [[net.auxesia.Chromsome]] instances.
@@ -86,13 +86,11 @@ object Chromosome {
    * @return A new [[net.auxesia.Chromosome]] instance.
    */
   def apply(gene: String) = {
-    def calcFitness(gene: String): Int = {
-      var f = 0
-      for ((a, b) <- gene zip TARGET_GENE) f += abs(a.intValue - b.intValue)
-      return f
+    def calcFitness(gene: Array[Char]): Int = {
+      gene.zip(TARGET_GENE).map(i => abs(i._1.intValue - i._2.intValue)).foldLeft(0)(_+_)
     }
 
-    new Chromosome(gene, calcFitness(gene))
+    new Chromosome(gene, calcFitness(gene.toCharArray))
   }
 
   /**
@@ -102,8 +100,7 @@ object Chromosome {
    * @return A [[net.auxesia.Chromosome]] instance with a random, valid gene.
    */
   def generateRandom: Chromosome = {
-    var g = ""
-    for (i <- 1 to TARGET_GENE.length) g += (Random.nextInt(90) + 32).toChar
-    Chromosome(g)
+    Chromosome(new Array[Char](TARGET_GENE.length).map(
+    		i => (Random.nextInt(90) + 32).toChar).mkString)
   }
 }

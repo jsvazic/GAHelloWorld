@@ -41,7 +41,7 @@ import scala.util.Random
  * @param elitism The elitism ratio.
  * @param mutation The mutation ratio.
  */
-class Population private (private var _population: Vector[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
+class Population private (private var _population: Array[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
 	/**
 	 * A public accessor for the underlying vector of [[net.auxesia.Chromosome]]
 	 * objects.
@@ -54,10 +54,7 @@ class Population private (private var _population: Vector[Chromosome], val cross
 	 */
 	def evolve = {
 		// Create a buffer for the new generation
-		val popSize = _population.length
-		val elitismCount = round(popSize * elitism)
-		var buffer = _population.take(elitismCount)
-		val rest = _population.takeRight(popSize - elitismCount)
+		val elitismCount = round(_population.length * elitism)
 		
 		def randomMutate(ch: Chromosome): Chromosome = {
 			if (Random.nextFloat() <= mutation) ch.mutate else ch
@@ -81,20 +78,28 @@ class Population private (private var _population: Vector[Chromosome], val cross
 			return parents			
 		}
 		
-		for (ch <- rest) {
-			if (Random.nextFloat() <= crossover) {
+		var idx = 0
+		val buffer = new Array[Chromosome](_population.length)
+		while (idx < buffer.length) {
+			if (idx < elitismCount) {
+				buffer(idx) = _population(idx)
+			} else if (Random.nextFloat() <= crossover) {
 				// Select the parents and mate to get their children
 				val parents  = selectParents
 				val children = parents(0).mate(parents(1))
 				
-				buffer = randomMutate(children(0)) +: buffer
-				buffer = randomMutate(children(1)) +: buffer				
+				buffer(idx) = randomMutate(children(0))
+				idx += 1
+				if (idx < buffer.length) {
+					buffer(idx) = randomMutate(children(1))
+				}
 			} else {
-				buffer = randomMutate(ch) +: buffer
+				buffer(idx) = randomMutate(_population(idx))
 			}
+			idx += 1
 		}
 
-		_population = buffer.sortWith((s, t) => s.fitness < t.fitness).take(popSize)
+		_population = buffer.sortWith((s, t) => s.fitness < t.fitness)
 	}	
 }
 
@@ -128,12 +133,8 @@ object Population {
 	 * @return A [[scala.collection.immutable.List]] of the defined size
 	 * populated with random [[net.auxesia.Chromosome]] objects.
 	 */
-	private def generateInitialPopulation(size: Int): Vector[Chromosome] = {
-		var pop = Vector[Chromosome]()
-		for (i <- 1 to size) {
-			pop = Chromosome.generateRandom +: pop
-		}
-
-		pop.sortWith((s, t) => s.fitness < t.fitness)
+	private def generateInitialPopulation(size: Int): Array[Chromosome] = {
+		new Array[Chromosome](size).map(i => Chromosome.generateRandom).sortWith(
+				(s, t) => s.fitness < t.fitness)
 	}
 }
