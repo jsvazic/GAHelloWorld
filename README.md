@@ -108,6 +108,7 @@ Take a look at the README files in:
 *   [Scala](GAHelloWorld/tree/master/scala)
 *   [Python](GAHelloWorld/tree/master/python)
 *   [OCaml](GAHelloWorld/tree/master/ocaml)
+*   [PHP](GAHelloWorld/tree/master/php)
 
 for the specifics for each language.
 
