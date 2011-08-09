@@ -55,7 +55,7 @@ class ChromosomeSpec extends WordSpec with MustMatchers {
     "mutate no more than one element of its gene" in {
       for (i <- 1 to 1000) {
         val c1 = Chromosome.generateRandom
-        val c2 = c1.mutate
+        val c2 = Chromosome.mutate(c1)
         c1.gene.length must be === c2.gene.length
 
         var diff = 0
@@ -69,7 +69,7 @@ class ChromosomeSpec extends WordSpec with MustMatchers {
       val c2 = Chromosome.generateRandom
 
       // Check to ensure the right number of children are returned.
-      val children = c1.mate(c2)
+      val children = Chromosome.mate(c1, c2)
       children.length must be === 2
 
       // Check the resulting child gene lengths

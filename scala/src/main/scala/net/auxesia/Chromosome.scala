@@ -37,39 +37,7 @@ import scala.util.Random
  * @param gene The gene representing the chromosome.
  * @param fitness The fitness of the chromosome.
  */
-class Chromosome private (val gene: String, val fitness: Int) {
-
-  /**
-   * Method used to mutate the gene of the given chromosome, returning a
-   * new [[net.auxesia.Chromsome]] instance.  Only one character in the
-   * gene is mutated, the rest of the gene remains the same.
-   *
-   * @return A new [[net.auxesia.Chromosome]] with one character replaced
-   * in the original gene.
-   */
-  def mutate: Chromosome = {
-    var arr = gene.toArray
-    arr(Random.nextInt(gene.length)) = (Random.nextInt(90) + 32).toChar
-    Chromosome(arr.mkString)
-  }
-
-  /**
-   * Method to mate this [[net.auxesia.Chromosome]] with another, resulting
-   * in two distinct offspring.
-   *
-   * @param other The other [[net.auxesia.Chromosome]] to mate with.
-   *
-   * @return A 2-element array of resuling [[net.auxesia.Chromosome]]
-   * objects created through the mating algorithm.
-   */
-  def mate(other: Chromosome): Array[Chromosome] = {
-    val arr = new Array[Chromosome](2)
-    val pivot = Random.nextInt(gene.length)
-    arr(0) = Chromosome(gene.substring(0, pivot) + other.gene.substring(pivot))
-    arr(1) = Chromosome(other.gene.substring(0, pivot) + gene.substring(pivot))
-    return arr
-  }
-}
+class Chromosome private (val gene: String, val fitness: Int)
 
 /**
  * A factory object for constructing new [[net.auxesia.Chromosome]] instances.
@@ -103,4 +71,38 @@ object Chromosome {
     Chromosome(new Array[Char](TARGET_GENE.length).map(
     		i => (Random.nextInt(90) + 32).toChar).mkString)
   }
+  
+  /**
+   * Method to mate this [[net.auxesia.Chromosome]] with another, resulting
+   * in two distinct offspring.
+   *
+   * @param first The first [[net.auxesia.Chromosome]] to mate with.
+   * @param second The second [[net.auxesia.Chromosome]] to mate with.
+   *
+   * @return A 2-element array of resuling [[net.auxesia.Chromosome]]
+   * objects created through the mating algorithm.
+   */
+  def mate(first: Chromosome, second: Chromosome): Array[Chromosome] = {
+    val pivot = Random.nextInt(first.gene.length)
+    Array(
+	    Chromosome(first.gene.substring(0, pivot) + second.gene.substring(pivot)),
+        Chromosome(second.gene.substring(0, pivot) + first.gene.substring(pivot))
+    )
+  }
+  
+  /**
+   * Method used to mutate the gene of the given chromosome, returning a
+   * new [[net.auxesia.Chromsome]] instance.  Only one character in the
+   * gene is mutated, the rest of the gene remains the same.
+   *
+   * @param ch The [[net.auxesia.Chromosome]] to mutate.
+   *
+   * @return A new [[net.auxesia.Chromosome]] with one character replaced
+   * in the original gene.
+   */
+  def mutate(ch: Chromosome): Chromosome = {
+    var arr = ch.gene.toArray
+    arr(Random.nextInt(ch.gene.length)) = (Random.nextInt(90) + 32).toChar
+    Chromosome(arr.mkString)
+  }  
 }

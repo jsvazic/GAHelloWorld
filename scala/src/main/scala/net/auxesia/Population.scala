@@ -57,7 +57,7 @@ class Population private (private var _population: Array[Chromosome], val crosso
 		val elitismCount = round(_population.length * elitism)
 		
 		def randomMutate(ch: Chromosome): Chromosome = {
-			if (Random.nextFloat() <= mutation) ch.mutate else ch
+			if (Random.nextFloat() <= mutation) Chromosome.mutate(ch) else ch
 		}
 		
 		def selectParents: Array[Chromosome] = {
@@ -86,7 +86,7 @@ class Population private (private var _population: Array[Chromosome], val crosso
 			} else if (Random.nextFloat() <= crossover) {
 				// Select the parents and mate to get their children
 				val parents  = selectParents
-				val children = parents(0).mate(parents(1))
+				val children = Chromosome.mate(parents(0), parents(1))
 				
 				buffer(idx) = randomMutate(children(0))
 				idx += 1
