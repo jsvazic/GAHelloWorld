@@ -79,12 +79,12 @@ object Chromosome {
    * @param first The first [[net.auxesia.Chromosome]] to mate with.
    * @param second The second [[net.auxesia.Chromosome]] to mate with.
    *
-   * @return A 2-element array of resuling [[net.auxesia.Chromosome]]
+   * @return A 2-element vector of resuling [[net.auxesia.Chromosome]]
    * objects created through the mating algorithm.
    */
-  def mate(first: Chromosome, second: Chromosome): Array[Chromosome] = {
+  def mate(first: Chromosome, second: Chromosome): Vector[Chromosome] = {
     val pivot = Random.nextInt(first.gene.length)
-    Array(
+    Vector[Chromosome](
 	    Chromosome(first.gene.substring(0, pivot) + second.gene.substring(pivot)),
         Chromosome(second.gene.substring(0, pivot) + first.gene.substring(pivot))
     )

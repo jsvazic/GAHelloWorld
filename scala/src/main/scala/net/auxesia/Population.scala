@@ -23,7 +23,7 @@
  */
 package net.auxesia
 
-import akka.actor.{Actor, PoisonPill}
+import akka.actor.{Actor, ActorRef, PoisonPill}
 import Actor._
 import akka.routing.{Routing, CyclicIterator}
 import Routing._
@@ -45,7 +45,7 @@ case class Mutate(chromosome: Chromosome) extends EvolutionMessage
 
 case class Mate(first: Chromosome, second: Chromosome) extends EvolutionMessage
 
-case class Result(arr: Array[Chromosome]) extends EvolutionMessage
+case class Result(v: Vector[Chromosome]) extends EvolutionMessage
 
 /**
  * Class defining a genetic algorithm population for the "Hello, world!" 
@@ -60,102 +60,120 @@ case class Result(arr: Array[Chromosome]) extends EvolutionMessage
  * @param elitism The elitism ratio.
  * @param mutation The mutation ratio.
  */
-class Population private (private var _population: Array[Chromosome], val crossover: Float, val elitism: Float, val mutation: Float) {
-	/**
-	 * A public accessor for the underlying vector of [[net.auxesia.Chromosome]]
-	 * objects.
-	 */
-	def population = _population
-	
-	/**
-	 * Method used to evolve a new generation for the population.  This method
-	 * modifies the internal population represented by this class.
-	 */
-	def evolve = {
-		// Create a buffer for the new generation
-		val elitismCount = round(_population.length * elitism)
-		
-		def randomMutate(ch: Chromosome): Chromosome = {
-			if (Random.nextFloat() <= mutation) Chromosome.mutate(ch) else ch
-		}
-		
-		def selectParents: Array[Chromosome] = {
-			val tournamentSize = 3
-			val parents = new Array[Chromosome](2)
-	
-			// Randomly select two parents via tournament selection.
-			for (i <- 0 to 1) {
-				parents(i) = _population(Random.nextInt(_population.length))
-				for (j <- 1 to tournamentSize) {
-					val idx = Random.nextInt(_population.length)
-					if (_population(idx).fitness < parents(i).fitness) {
-						parents(i) = _population(idx)
-					}
-				}
-			}
-			
-			return parents			
-		}
-		
-		var idx = 0
-		val buffer = new Array[Chromosome](_population.length)
-		while (idx < buffer.length) {
-			if (idx < elitismCount) {
-				buffer(idx) = _population(idx)
-			} else if (Random.nextFloat() <= crossover) {
-				// Select the parents and mate to get their children
-				val parents  = selectParents
-				val children = Chromosome.mate(parents(0), parents(1))
-				
-				buffer(idx) = randomMutate(children(0))
-				idx += 1
-				if (idx < buffer.length) {
-					buffer(idx) = randomMutate(children(1))
-				}
-			} else {
-				buffer(idx) = randomMutate(_population(idx))
-			}
-			idx += 1
-		}
+class Population private (private val popSize: Int, val crossover: Float, val elitism: Float, val mutation: Float) {
+  private var _population = Population.generateInitialPopulation(popSize)
 
-		_population = buffer.sortWith((s, t) => s.fitness < t.fitness)
-	}	
+  /**
+   * A public accessor for the underlying vector of [[net.auxesia.Chromosome]]
+   * objects.
+   */
+  def population = _population
+	
+  /**
+   * Method used to evolve a new generation for the population.  This method
+   * modifies the internal population represented by this class.
+   */
+  def evolve = {
+  	// Create our actor to handle messages
+	val latch = new CountDownLatch(1)
+	val evolver = actorOf(new Evolver(latch))
+	evolver.start()
+  
+    // Create a buffer for the new generation
+	def randomMutate(ch: Chromosome): Option[Chromosome] = {
+	  if (Random.nextFloat() <= mutation) {
+		evolver ! Mutate(ch)
+		None
+	  } else {
+		Some(ch)
+	  }
+	}
+		
+	def selectParents: Vector[Chromosome] = {
+	  val tournamentSize = 3
+	  var parents = Vector[Chromosome]()
+	
+	  // Randomly select two parents via tournament selection.
+	  for (i <- 0 to 1) {
+		var candidate = _population(Random.nextInt(popSize))
+		for (j <- 1 to tournamentSize) {
+		  val idx = Random.nextInt(popSize)
+		  if (_population(idx).fitness < candidate.fitness) {
+			candidate = _population(idx)
+		  }
+		}
+		parents = parents :+ candidate
+	  }
+	  parents
+	}
+		
+	val elitismCount = round(_population.size * elitism)
+	var buffer = _population.take(elitismCount)
+	for (idx <- elitismCount to _population.size) {
+	  if (Random.nextFloat() <= crossover) {
+		// Select the parents and mate to get their children
+		val parents  = selectParents
+		val children = Chromosome.mate(parents(0), parents(1))
+				
+		randomMutate(children(0)) match {
+		  case Some(x) => buffer = buffer :+ x
+		  case _ => // Do nothing
+		}
+		
+		randomMutate(children(1)) match {
+		  case Some(x) => buffer = buffer :+ x
+		  case _ => // Do nothing
+		}
+	  } else {
+	    randomMutate(_population(idx)) match {
+		  case Some(x) => buffer = buffer :+ x
+		  case _ => // Do nothing
+		}
+	  }
+	}
+	
+	// We're done, send a message to evolver and wait for the actors to finish
+	evolver ! Done
+	latch.await()
+	
+	// Grab the top population from the buffer.
+	_population = buffer.sortWith((s, t) => s.fitness < t.fitness).take(popSize)
+  }	
 }
 
 /**
  * Factory for [[net.auxesia.Population]] instances.
  */
 object Population {
-	/**
-	 * Create a [[net.auxesia.Population]] with a given size, crossover ratio, elitism ratio
-	 * and mutation ratio.
-	 * 
-	 * @param size The size of the population.
-	 * @param crossover The crossover ratio for the population.
-	 * @param elitism The elitism ratio for the population.
-	 * @param mutation The mutation ratio for the population.
-	 * 
-	 * @return A new [[net.auxesia.Population]] instance with the defined
-	 * parameters and an initialized set of [[net.auxesia.Chromosome]] objects
-	 * representing the population.
-	 */
-	def apply(size: Int, crossover: Float, elitism: Float, mutation: Float) = {
-		new Population(generateInitialPopulation(size), crossover, elitism, mutation)
-	}
+  /**
+   * Create a [[net.auxesia.Population]] with a given size, crossover ratio, elitism ratio
+   * and mutation ratio.
+   * 
+   * @param size The size of the population.
+   * @param crossover The crossover ratio for the population.
+   * @param elitism The elitism ratio for the population.
+   * @param mutation The mutation ratio for the population.
+   * 
+   * @return A new [[net.auxesia.Population]] instance with the defined
+   * parameters and an initialized set of [[net.auxesia.Chromosome]] objects
+   * representing the population.
+   */
+  def apply(size: Int, crossover: Float, elitism: Float, mutation: Float) = {
+	new Population(size, crossover, elitism, mutation)
+  }
 	
-	/**
-	 * Helper method used to generate an initial population of random
-	 * [[net.auxesia.Chromosome]] objects for a given population size.
-	 * 
-	 * @param size The size of the population.
-	 * 
-	 * @return A [[scala.collection.immutable.List]] of the defined size
-	 * populated with random [[net.auxesia.Chromosome]] objects.
-	 */
-	private def generateInitialPopulation(size: Int): Array[Chromosome] = {
-		new Array[Chromosome](size).map(i => Chromosome.generateRandom).sortWith(
-				(s, t) => s.fitness < t.fitness)
-	}
+  /**
+   * Helper method used to generate an initial population of random
+   * [[net.auxesia.Chromosome]] objects for a given population size.
+   * 
+   * @param size The size of the population.
+   * 
+   * @return A [[scala.collection.immutable.List]] of the defined size
+   * populated with random [[net.auxesia.Chromosome]] objects.
+   */
+  private def generateInitialPopulation(size: Int): Vector[Chromosome] = {
+	Vector.fill(size)(Chromosome.generateRandom).sortWith((s, t) => s.fitness < t.fitness)
+  }
 }
 
 class Worker extends Actor {
@@ -163,18 +181,18 @@ class Worker extends Actor {
 	case x: Mate =>
 	  self reply Result(Chromosome.mate(x.first, x.second))
     case y: Mutate =>
-      self reply Result(Array[Chromosome](Chromosome.mutate(y.chromosome)))
+      self reply Result(Vector[Chromosome](Chromosome.mutate(y.chromosome)))
   }
 }
 
 class Evolver(latch: CountDownLatch) extends Actor {
-
   var nrOfMessages: Int = _
   var nrOfResults: Int = _
   var items = Vector[Chromosome]()
 
   // create the workers
-  val workers = Vector.fill(Runtime.getRuntime.availableProcessors)(actorOf[Worker].start())
+  val nrOfWorkers = Runtime.getRuntime.availableProcessors
+  val workers = Vector.fill(nrOfWorkers)(actorOf[Worker].start())
 
   // wrap them with a load-balancing router
   val router = Routing.loadBalancerActor(CyclicIterator(workers)).start()
@@ -191,7 +209,6 @@ class Evolver(latch: CountDownLatch) extends Actor {
 	  nrOfMessages += 1
 	  // schedule work
 	  router ! mate
-	  
 
 	case mutate: Mutate =>
 	  nrOfMessages += 1
@@ -199,7 +216,7 @@ class Evolver(latch: CountDownLatch) extends Actor {
 	  router ! mutate
 
 	case result: Result =>
-	  for (item <- result.arr) items = items :+ item
+	  for (item <- result.v) items = items :+ item
 	  nrOfResults += 1
 	  if (nrOfResults == nrOfMessages) self.stop()
   }
