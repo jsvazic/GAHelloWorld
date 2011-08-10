@@ -23,10 +23,29 @@
  */
 package net.auxesia
 
+import akka.actor.{Actor, PoisonPill}
+import Actor._
+import akka.routing.{Routing, CyclicIterator}
+import Routing._
+import akka.dispatch.Dispatchers
+
 import scala.collection.Iterator
 import scala.collection.immutable.Vector
 import scala.math.round
 import scala.util.Random
+
+import java.util.concurrent.CountDownLatch
+
+/** Trait defining an evolution message, used when evolving a population. */
+sealed trait EvolutionMessage
+
+case object Done extends EvolutionMessage
+
+case class Mutate(chromosome: Chromosome) extends EvolutionMessage
+
+case class Mate(first: Chromosome, second: Chromosome) extends EvolutionMessage
+
+case class Result(arr: Array[Chromosome]) extends EvolutionMessage
 
 /**
  * Class defining a genetic algorithm population for the "Hello, world!" 
@@ -137,4 +156,55 @@ object Population {
 		new Array[Chromosome](size).map(i => Chromosome.generateRandom).sortWith(
 				(s, t) => s.fitness < t.fitness)
 	}
+}
+
+class Worker extends Actor {
+  def receive = {
+	case x: Mate =>
+	  self reply Result(Chromosome.mate(x.first, x.second))
+    case y: Mutate =>
+      self reply Result(Array[Chromosome](Chromosome.mutate(y.chromosome)))
+  }
+}
+
+class Evolver(latch: CountDownLatch) extends Actor {
+
+  var nrOfMessages: Int = _
+  var nrOfResults: Int = _
+  var items = Vector[Chromosome]()
+
+  // create the workers
+  val workers = Vector.fill(Runtime.availableProcessors)(actorOf[Worker].start())
+
+  // wrap them with a load-balancing router
+  val router = Routing.loadBalancerActor(CyclicIterator(workers)).start()
+
+  def receive = {
+    case Done =>
+	  // send a PoisonPill to all workers telling them to shut down themselves
+	  router ! Broadcast(PoisonPill)
+	  
+	  // send a PoisonPill to the router, telling him to shut himself down
+	  router ! PoisonPill
+
+	case mate: Mate =>
+	  nrOfMessages += 1
+	  // schedule work
+	  router ! mate
+	  
+
+	case mutate: Mutate =>
+	  nrOfMessages += 1
+	  // schedule work
+	  router ! mutate
+
+	case result: Result =>
+	  for (item <- result.arr) items = items :+ item
+	  nrOfResults += 1
+	  if (nrOfResults == nrOfMessages) self.stop()
+  }
+  
+  override def postStop() {
+    latch.countDown()
+  }
 }
