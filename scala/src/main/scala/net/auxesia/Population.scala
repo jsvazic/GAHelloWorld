@@ -174,7 +174,7 @@ class Evolver(latch: CountDownLatch) extends Actor {
   var items = Vector[Chromosome]()
 
   // create the workers
-  val workers = Vector.fill(Runtime.availableProcessors)(actorOf[Worker].start())
+  val workers = Vector.fill(Runtime.getRuntime.availableProcessors)(actorOf[Worker].start())
 
   // wrap them with a load-balancing router
   val router = Routing.loadBalancerActor(CyclicIterator(workers)).start()
