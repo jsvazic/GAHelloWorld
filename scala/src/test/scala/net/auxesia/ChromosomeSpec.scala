@@ -42,58 +42,66 @@ class ChromosomeSpec extends WordSpec with MustMatchers {
 
     "be able to generate a valid random instance of itself" in {
       for (i <- 1 to 1000) {
-        var c = Chromosome.generateRandom
-        c.fitness must be >= 0
-        c.gene.length must be === 13
-        for (ch <- c.gene) {
+	    val gene = Chromosome.generateRandomGene
+		gene.length must be === 13
+        for (ch <- gene) {
           ch.intValue must be >= 32
           ch.intValue must be <= 121
         }
+		
+        val c = Chromosome(gene)
+        c.fitness must be >= 0
       }
     }
 
     "mutate no more than one element of its gene" in {
       for (i <- 1 to 1000) {
-        val c1 = Chromosome.generateRandom
-        val c2 = Chromosome.mutate(c1)
-        c1.gene.length must be === c2.gene.length
+        val gene1 = Chromosome.generateRandomGene
+        val gene2 = Chromosome.mutate(gene1)
+        gene1.length must be === gene2.length
 
         var diff = 0
-        for ((a, b) <- c1.gene zip c2.gene) if (a != b) diff += 1
+        for ((a, b) <- gene1 zip gene2) if (a != b) diff += 1
         diff must be <= 1
       }
     }
 
     "be able to mate correctly with another Chromosome" in {
-      val c1 = Chromosome.generateRandom
-      val c2 = Chromosome.generateRandom
+      val gene1 = Chromosome.generateRandomGene
+      val gene2 = Chromosome.generateRandomGene
 
       // Check to ensure the right number of children are returned.
-      val children = Chromosome.mate(c1, c2)
+      val children = Chromosome.mate(gene1, gene2)
       children.length must be === 2
 
       // Check the resulting child gene lengths
-      children(0).gene.length must be === 13
-      children(1).gene.length must be === 13
+      children(0).length must be === 13
+      children(1).length must be === 13
 
       // Determine the pivot point for the mating
       var pivot = -1
-      for (((a, b), idx) <- c1.gene zip children(0).gene zip (0 to c1.gene.length - 1)) {
+      for (((a, b), idx) <- gene1 zip children(0) zip (0 to gene1.length - 1)) {
         if (pivot < 0 && a != b) pivot = idx
       }
 
-      pivot must be < c1.gene.length
+      pivot must be < gene1.length
 
       // Check the first child.
-      for (idx <- 0 to c1.gene.length - 1) {
-        if (idx < pivot) c1.gene(idx) must be === children(0).gene(idx)
-        else c2.gene(idx) must be === children(0).gene(idx)
+      for (idx <- 0 to gene1.length - 1) {
+        if (idx < pivot) {
+		  gene1(idx) must be === children(0)(idx)
+        } else {
+		  gene2(idx) must be === children(0)(idx)
+		}
       }
 
       // Check the second child.
-      for (idx <- 0 to children(1).gene.length - 1) {
-        if (idx < pivot) c2.gene(idx) must be === children(1).gene(idx)
-        else c1.gene(idx) must be === children(1).gene(idx)
+      for (idx <- 0 to children(1).length - 1) {
+        if (idx < pivot) {
+		  gene2(idx) must be === children(1)(idx)
+		} else {
+		  gene1(idx) must be === children(1)(idx)
+		}
       }
     }
   }

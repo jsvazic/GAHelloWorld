@@ -55,38 +55,42 @@ object Chromosome {
    */
   def apply(gene: String) = {
     def calcFitness(gene: Array[Char]): Int = {
-      gene.zip(TARGET_GENE).map(i => abs(i._1.intValue - i._2.intValue)).foldLeft(0)(_+_)
+      gene.zip(TARGET_GENE).map(
+	      i => abs(i._1.intValue - i._2.intValue)
+	  ).foldLeft(0)(_+_)
     }
 
     new Chromosome(gene, calcFitness(gene.toCharArray))
   }
 
   /**
-   * Helper method used to generate a random [[net.auxesia.Chromosome]]
-   * instance.
+   * Helper method used to generate a random gene for use in constructing a 
+   * new [[net.auxesia.Chromosome]] instance.
    * 
-   * @return A [[net.auxesia.Chromosome]] instance with a random, valid gene.
+   * @return A valid gene for use when constructing a new 
+   * [[net.auxesia.Chromosome]] instance.
    */
-  def generateRandom: Chromosome = {
-    Chromosome(new Array[Char](TARGET_GENE.length).map(
-    		i => (Random.nextInt(90) + 32).toChar).mkString)
+  def generateRandomGene: String = {
+    new Array[Char](TARGET_GENE.length).map(
+    		i => (Random.nextInt(90) + 32).toChar).mkString
   }
   
   /**
-   * Method to mate this [[net.auxesia.Chromosome]] with another, resulting
-   * in two distinct offspring.
+   * Method to mate one [[net.auxesia.Chromosome]]'s gene with another, 
+   * resulting in two distinct offspring genes that can be used to create
+   * new instances of [[net.auxesia.Chromosome]]'s as required.
    *
-   * @param first The first [[net.auxesia.Chromosome]] to mate with.
-   * @param second The second [[net.auxesia.Chromosome]] to mate with.
+   * @param first The first gene to mate.
+   * @param second The second gene to mate.
    *
    * @return A 2-element vector of resuling [[net.auxesia.Chromosome]]
-   * objects created through the mating algorithm.
+   * genes created through the mating algorithm.
    */
-  def mate(first: Chromosome, second: Chromosome): Vector[Chromosome] = {
-    val pivot = Random.nextInt(first.gene.length)
-    Vector[Chromosome](
-	    Chromosome(first.gene.substring(0, pivot) + second.gene.substring(pivot)),
-        Chromosome(second.gene.substring(0, pivot) + first.gene.substring(pivot))
+  def mate(first: String, second: String): Vector[String] = {
+    val pivot = Random.nextInt(first.length)
+    Vector[String](
+	    first.substring(0, pivot) + second.substring(pivot),
+        second.substring(0, pivot) + first.substring(pivot)
     )
   }
   
@@ -95,14 +99,13 @@ object Chromosome {
    * new [[net.auxesia.Chromsome]] instance.  Only one character in the
    * gene is mutated, the rest of the gene remains the same.
    *
-   * @param ch The [[net.auxesia.Chromosome]] to mutate.
+   * @param gene The gene to mutate.
    *
-   * @return A new [[net.auxesia.Chromosome]] with one character replaced
-   * in the original gene.
+   * @return A new gene with one character replaced in the original gene.
    */
-  def mutate(ch: Chromosome): Chromosome = {
-    var arr = ch.gene.toArray
-    arr(Random.nextInt(ch.gene.length)) = (Random.nextInt(90) + 32).toChar
-    Chromosome(arr.mkString)
-  }  
+  def mutate(gene: String): String = {
+    var arr = gene.toArray
+    arr(Random.nextInt(gene.length)) = (Random.nextInt(90) + 32).toChar
+    arr.mkString
+  }
 }
