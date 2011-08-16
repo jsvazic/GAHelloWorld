@@ -23,13 +23,12 @@
  */
 package net.auxesia
 
+import akka.dispatch.Future
+
 import scala.collection.Iterator
 import scala.collection.immutable.Vector
 import scala.math.round
 import scala.util.Random
-
-/** Trait defining an evolution message, used when evolving a population. */
-sealed trait EvolutionMessage
 
 /**
  * Class defining a genetic algorithm population for the "Hello, world!" 
@@ -83,19 +82,30 @@ class Population private (private val popSize: Int, val crossover: Float, val el
 		
 	val elitismCount = round(_population.size * elitism)
 	var buffer = _population.take(elitismCount)
-	for (idx <- elitismCount to _population.size) {
+	var futures: Vector[Future[Any]] = Vector()
+	for (idx <- elitismCount to _population.size - 1) {
 	  if (Random.nextFloat() <= crossover) {
 		// Select the parents and mate to get their children
 		val parents  = selectParents
-		val children = Chromosome.mate(parents(0).gene, parents(1).gene)
-
-		buffer = buffer :+ Chromosome(randomMutate(children(0)))
-		buffer = buffer :+ Chromosome(randomMutate(children(1)))
+		futures = futures :+ Future { 
+		  Chromosome.mate(parents(0).gene, parents(1).gene).map(randomMutate)
+		}
 	  } else {
-	    buffer = buffer :+ Chromosome(randomMutate(_population(idx).gene))
+	    futures = futures :+ Future { randomMutate(_population(idx).gene) }
 	  }
 	}
 	
+	def mkChromosome(f: Future[Any]): Vector[Chromosome]	= {
+	  val fVal: Any = f.get
+	  fVal match {
+	    case v: Vector[String] => v.map(x => Chromosome(x))
+		case gene: String => Vector(Chromosome(gene))
+		case _ => Vector[Chromosome]()
+	  }
+	}
+	
+	futures.map(x => buffer = buffer ++ mkChromosome(x))
+
 	// Grab the top population from the buffer.
 	_population = buffer.sortWith((s, t) => s.fitness < t.fitness).take(popSize)
   }	
