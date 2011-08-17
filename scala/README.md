@@ -13,9 +13,16 @@ simple, and spans 3 classes.  Only two of them do any real interesting work;
 the third one, <i>GAHelloWorld</i>, only exists as a driver for the 
 application.
 
+### Akka Support
+This latest set of changes includes [Akka](http://akka.io/) support, which 
+provides the ability for evolving new chromosomes in a parallel fashion.  This
+is overkill for this simple project, but it provides a good overview of how
+Akka can be used for more time-consuming operations (normally in the fitness
+function for Chromosomes).
+
 ## Usage
 
-The project currently uses [SBT 0.7.7](http://code.google.com/p/simple-build-tool/) 
+The project currently uses [SBT 0.7.x](http://code.google.com/p/simple-build-tool/)
 for the build.  To build it locally, run the following from a shell:
 
 > sbt update package
