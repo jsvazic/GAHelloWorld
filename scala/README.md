@@ -2,7 +2,7 @@
 
 This is a simple project intended to showcase genetic algorithms with a well 
 known example for all new developers; namely the classic "Hello, world!" 
-example, written in Scala (2.8.1).
+example, written in Scala (2.9.0).
 
 ## Overview
 
@@ -15,7 +15,7 @@ application.
 
 ## Usage
 
-The project currently uses [SBT](http://code.google.com/p/simple-build-tool/) 
+The project currently uses [SBT 0.7.7](http://code.google.com/p/simple-build-tool/) 
 for the build.  To build it locally, run the following from a shell:
 
 > sbt update package
@@ -23,11 +23,6 @@ for the build.  To build it locally, run the following from a shell:
 To execute the simulation, run:
 
 > sbt run
-
-or if you like to have an executable .jar file, change directories to the 
-target/scala_2.8.1 directory and execute:
-
-> java -jar gahelloworld_2.8.1-1.0.jar
 
 ## Copyright and License
 

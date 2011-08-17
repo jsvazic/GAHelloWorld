@@ -70,9 +70,10 @@ object Chromosome {
    * @return A valid gene for use when constructing a new 
    * [[net.auxesia.Chromosome]] instance.
    */
-  def generateRandomGene: String = {
-    new Array[Char](TARGET_GENE.length).map(
-    		i => (Random.nextInt(90) + 32).toChar).mkString
+  def generateRandom: Chromosome = {
+    Chromosome(new Array[Char](TARGET_GENE.length).map(
+        i => (Random.nextInt(90) + 32).toChar
+	  ).mkString)
   }
   
   /**
@@ -86,11 +87,11 @@ object Chromosome {
    * @return A 2-element vector of resuling [[net.auxesia.Chromosome]]
    * genes created through the mating algorithm.
    */
-  def mate(first: String, second: String): Vector[String] = {
-    val pivot = Random.nextInt(first.length)
-    Vector[String](
-	    first.substring(0, pivot) + second.substring(pivot),
-        second.substring(0, pivot) + first.substring(pivot)
+  def mate(first: Chromosome, second: Chromosome): Vector[Chromosome] = {
+    val pivot = Random.nextInt(first.gene.length)
+    Vector[Chromosome](
+	    Chromosome(first.gene.substring(0, pivot) + second.gene.substring(pivot)),
+        Chromosome(second.gene.substring(0, pivot) + first.gene.substring(pivot))
     )
   }
   
@@ -99,13 +100,14 @@ object Chromosome {
    * new [[net.auxesia.Chromsome]] instance.  Only one character in the
    * gene is mutated, the rest of the gene remains the same.
    *
-   * @param gene The gene to mutate.
+   * @param ch The [[net.auxesia.Chromosome]] to mutate.
    *
-   * @return A new gene with one character replaced in the original gene.
+   * @return A new [[net.auxesia.Chromosome]], with its gene having a one 
+   * character delta compared to the given [[net.auxesia.Chromosome]]'s gene.
    */
-  def mutate(gene: String): String = {
-    var arr = gene.toArray
-    arr(Random.nextInt(gene.length)) = (Random.nextInt(90) + 32).toChar
-    arr.mkString
+  def mutate(ch: Chromosome): Chromosome = {
+    var arr = ch.gene.toArray
+    arr(Random.nextInt(ch.gene.length)) = (Random.nextInt(90) + 32).toChar
+    Chromosome(arr.mkString)
   }
 }
