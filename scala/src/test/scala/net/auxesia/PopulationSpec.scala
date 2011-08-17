@@ -78,10 +78,11 @@ class PopulationSpec extends WordSpec with MustMatchers {
       pop.evolve
       pop.population must have length (1024)
       
-
       (pop.crossover * 100).intValue must be === 80
       (pop.elitism * 100).intValue must be === 10
       (pop.mutation * 100).intValue must be === 5
+	  
+	  val elitisimMaxIdx = round(pop.population.length * pop.elitism)
 
       var counter = 0
       for (ch <- list) {
@@ -92,6 +93,20 @@ class PopulationSpec extends WordSpec with MustMatchers {
 
       counter must be >= round(pop.population.length * pop.elitism)
       counter must be < pop.population.length
+	  pop.population(elitisimMaxIdx).fitness >= list(elitisimMaxIdx).fitness
     }
+	
+	"use elitism properly" in {
+      val pop = Population(1024, 0.8f, 0.1f, 0.05f)
+      val list = Vector() ++ pop.population
+
+      list must have length (1024)
+	  for (i <- 1 to 100) {
+		pop.evolve
+	  }
+
+	  val elitisimMaxIdx = round(pop.population.length * pop.elitism)
+	  pop.population(elitisimMaxIdx).fitness >= list(elitisimMaxIdx).fitness
+	}
   }
 }
