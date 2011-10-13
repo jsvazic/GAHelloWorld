@@ -42,20 +42,21 @@ class ChromosomeSpec extends WordSpec with MustMatchers {
 
     "be able to generate a valid random instance of itself" in {
       for (i <- 1 to 1000) {
-        var c = Chromosome.generateRandom
-        c.fitness must be >= 0
-        c.gene.length must be === 13
-        for (ch <- c.gene) {
+	    val chromosome = Chromosome.generateRandom
+		chromosome.gene.length must be === 13
+        for (ch <- chromosome.gene) {
           ch.intValue must be >= 32
           ch.intValue must be <= 121
         }
+		
+        chromosome.fitness must be >= 0
       }
     }
 
     "mutate no more than one element of its gene" in {
       for (i <- 1 to 1000) {
         val c1 = Chromosome.generateRandom
-        val c2 = c1.mutate
+        val c2 = Chromosome.mutate(c1)
         c1.gene.length must be === c2.gene.length
 
         var diff = 0
@@ -69,7 +70,7 @@ class ChromosomeSpec extends WordSpec with MustMatchers {
       val c2 = Chromosome.generateRandom
 
       // Check to ensure the right number of children are returned.
-      val children = c1.mate(c2)
+      val children = Chromosome.mate(c1, c2)
       children.length must be === 2
 
       // Check the resulting child gene lengths
@@ -86,14 +87,20 @@ class ChromosomeSpec extends WordSpec with MustMatchers {
 
       // Check the first child.
       for (idx <- 0 to c1.gene.length - 1) {
-        if (idx < pivot) c1.gene(idx) must be === children(0).gene(idx)
-        else c2.gene(idx) must be === children(0).gene(idx)
+        if (idx < pivot) {
+		  c1.gene(idx) must be === children(0).gene(idx)
+        } else {
+		  c2.gene(idx) must be === children(0).gene(idx)
+		}
       }
 
       // Check the second child.
       for (idx <- 0 to children(1).gene.length - 1) {
-        if (idx < pivot) c2.gene(idx) must be === children(1).gene(idx)
-        else c1.gene(idx) must be === children(1).gene(idx)
+        if (idx < pivot) {
+		  c2.gene(idx) must be === children(1).gene(idx)
+		} else {
+		  c1.gene(idx) must be === children(1).gene(idx)
+		}
       }
     }
   }

@@ -67,6 +67,9 @@ object GAHelloWorld {
       pop.evolve
       generation += 1
     }
+	
+	// We're done, so shutdown the population (which uses Akka)
+	pop.shutdown
     val endTime = System.currentTimeMillis
     
     println("Generation " + generation + ": " + pop.population(0).gene)
