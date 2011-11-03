@@ -81,6 +81,13 @@ class Population private (private val popSize: Int, val crossover: Float, val el
 	  }
 	}
 	
+	/**
+	 * A helper method that converts a Future object to a Vector[Chromosome]
+	 *
+	 * @param f The Future[Any] object to convert.
+	 * 
+	 * @return A Vector[Chromosome] object.
+	 */
 	def mkChromosome(f: Future[Any]): Vector[Chromosome] = {
 	  f.get match {
 	    case v: Vector[Chromosome] => v
@@ -92,7 +99,7 @@ class Population private (private val popSize: Int, val crossover: Float, val el
 	futures.map(x => buffer = buffer ++ mkChromosome(x))
 
 	// Grab the top population from the buffer.
-	_population = buffer.sortWith((s, t) => s.fitness < t.fitness).take(popSize)
+	_population = buffer.sortWith(_.fitness < _.fitness).take(popSize)
   }
   
   /**
@@ -138,9 +145,7 @@ object Population {
    * populated with random [[net.auxesia.Chromosome]] objects.
    */
   private def generateInitialPopulation(size: Int): Vector[Chromosome] = {
-	Vector.fill(size)(Chromosome.generateRandom).sortWith(
-	  (s, t) => s.fitness < t.fitness
-    )
+	Vector.fill(size)(Chromosome.generateRandom).sortWith(_.fitness < _.fitness)
   }
 }
 
