@@ -75,9 +75,9 @@ class Population private (private val popSize: Int, val crossover: Float, val el
 	for (idx <- elitismCount to _population.size - 1) {
 	  if (Random.nextFloat() <= crossover) {
 		// Select the parents and mate to get their children
-		futures = futures :+ (router !!! Mate(_population))
+		futures :+= router ? Mate(_population)
 	  } else {
-	    futures = futures :+ (router !!! Mutate(_population(idx)))
+	    futures :+= router ? Mutate(_population(idx))
 	  }
 	}
 	
@@ -90,7 +90,7 @@ class Population private (private val popSize: Int, val crossover: Float, val el
 	 */
 	def mkChromosome(f: Future[Any]): Vector[Chromosome] = {
 	  f.get match {
-	    case v: Vector[Chromosome] => v
+	        case v: Vector[Chromosome] => v
 		case ch: Chromosome => Vector(ch)
 		case _ => Vector[Chromosome]()
 	  }

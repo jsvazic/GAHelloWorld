@@ -22,7 +22,7 @@ function for Chromosomes).
 
 ## Usage
 
-The project currently uses [SBT 0.7.x](http://code.google.com/p/simple-build-tool/)
+The project currently uses [SBT 0.11.x](https://github.com/harrah/xsbt/wiki)
 for the build.  To build it locally, run the following from a shell:
 
 > sbt update package
