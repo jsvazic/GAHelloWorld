@@ -23,11 +23,11 @@
  */
 package net.auxesia
 
-import akka.actor.{Actor, PoisonPill}
+import akka.actor.{ Actor, PoisonPill }
 import Actor._
-import akka.routing.{Routing, CyclicIterator}
+import akka.routing.{ Routing, CyclicIterator }
 import Routing._
-import akka.dispatch.{Dispatchers, Future}
+import akka.dispatch.{ Dispatchers, Future }
 
 import scala.collection.Iterator
 import scala.collection.immutable.Vector
@@ -35,13 +35,13 @@ import scala.math.round
 import scala.util.Random
 
 /**
- * Class defining a genetic algorithm population for the "Hello, world!" 
+ * Class defining a genetic algorithm population for the "Hello, world!"
  * simulation.
- * 
+ *
  * @author John Svazic
- * @constructor Create a new population with an initial population defined, 
+ * @constructor Create a new population with an initial population defined,
  * along with specific crossover, elitism and mutation rates.
- * @param _population The vector of [[net.auxesia.Chromosome]] objects 
+ * @param _population The vector of [[net.auxesia.Chromosome]] objects
  * representing the population.
  * @param crossover The crossover ratio.
  * @param elitism The elitism ratio.
@@ -63,45 +63,40 @@ class Population private (private val popSize: Int, val crossover: Float, val el
    * objects.
    */
   def population = _population
-	
+
+  /**
+   * A helper method that converts a Future object to a Vector[Chromosome]
+   *
+   * @param f The Future[Any] object to convert.
+   *
+   * @return A Vector[Chromosome] object.
+   */
+  private def mkChromosome(f: Future[Any]) = {
+    f.get match {
+      case v: Vector[Chromosome] => v
+      case ch: Chromosome => Vector(ch)
+      case _ => Vector[Chromosome]()
+    }
+  }
+
   /**
    * Method used to evolve a new generation for the population.  This method
    * modifies the internal population represented by this class.
    */
-  def evolve = {		
-	val elitismCount = round(_population.size * elitism)
-	var buffer = _population.take(elitismCount)
-	var futures: Vector[Future[Any]] = Vector()
-	for (idx <- elitismCount to _population.size - 1) {
-	  if (Random.nextFloat() <= crossover) {
-		// Select the parents and mate to get their children
-		futures :+= router ? Mate(_population)
-	  } else {
-	    futures :+= router ? Mutate(_population(idx))
-	  }
-	}
-	
-	/**
-	 * A helper method that converts a Future object to a Vector[Chromosome]
-	 *
-	 * @param f The Future[Any] object to convert.
-	 * 
-	 * @return A Vector[Chromosome] object.
-	 */
-	def mkChromosome(f: Future[Any]): Vector[Chromosome] = {
-	  f.get match {
-	        case v: Vector[Chromosome] => v
-		case ch: Chromosome => Vector(ch)
-		case _ => Vector[Chromosome]()
-	  }
-	}
-	
-	futures.map(x => buffer = buffer ++ mkChromosome(x))
+  def evolve = {
+    val elitismCount = round(_population.size * elitism)
+    var buffer = _population.take(elitismCount)
+    var futures: Vector[Future[Any]] = Vector()
+    for (idx <- elitismCount to _population.size - 1) {
+      futures :+= router ? (if (Random.nextFloat <= crossover) Mate(_population) else Mutate(_population(idx)))
+    }
 
-	// Grab the top population from the buffer.
-	_population = buffer.sortWith(_.fitness < _.fitness).take(popSize)
+    futures.map(x => buffer = buffer ++ mkChromosome(x))
+
+    // Grab the top population from the buffer.
+    _population = buffer.sortWith(_.fitness < _.fitness).take(popSize)
   }
-  
+
   /**
    * Method to shutdown the Akka router and associated workers.
    */
@@ -121,31 +116,31 @@ object Population {
   /**
    * Create a [[net.auxesia.Population]] with a given size, crossover ratio, elitism ratio
    * and mutation ratio.
-   * 
+   *
    * @param size The size of the population.
    * @param crossover The crossover ratio for the population.
    * @param elitism The elitism ratio for the population.
    * @param mutation The mutation ratio for the population.
-   * 
+   *
    * @return A new [[net.auxesia.Population]] instance with the defined
    * parameters and an initialized set of [[net.auxesia.Chromosome]] objects
    * representing the population.
    */
   def apply(size: Int, crossover: Float, elitism: Float, mutation: Float) = {
-	new Population(size, crossover, elitism, mutation)
+    new Population(size, crossover, elitism, mutation)
   }
-	
+
   /**
    * Helper method used to generate an initial population of random
    * [[net.auxesia.Chromosome]] objects for a given population size.
-   * 
+   *
    * @param size The size of the population.
-   * 
+   *
    * @return A [[scala.collection.immutable.List]] of the defined size
    * populated with random [[net.auxesia.Chromosome]] objects.
    */
   private def generateInitialPopulation(size: Int): Vector[Chromosome] = {
-	Vector.fill(size)(Chromosome.generateRandom).sortWith(_.fitness < _.fitness)
+    Vector.fill(size)(Chromosome.generateRandom).sortWith(_.fitness < _.fitness)
   }
 }
 
@@ -185,15 +180,15 @@ case class Mate(population: Vector[Chromosome]) extends EvolutionMsg
 class Worker(mutationRatio: Double) extends Actor {
 
   /**
-   * A helper method to randomly mutate a given [[net.auxesia.Chromosome]] 
+   * A helper method to randomly mutate a given [[net.auxesia.Chromosome]]
    * based on the mutation ratio.
    *
-   * @return Either a mutated [[net.auxesia.Chromosome]] or the given 
-   * [[net.auxesia.Chromosome]] unaltered, depending on if a random float is 
+   * @return Either a mutated [[net.auxesia.Chromosome]] or the given
+   * [[net.auxesia.Chromosome]] unaltered, depending on if a random float is
    * less than the mutation ration.
    */
-  private def randomMutate(ch: Chromosome): Chromosome = {
-	if (Random.nextFloat() <= mutationRatio) Chromosome.mutate(ch) else ch
+  private def randomMutate(ch: Chromosome) = {
+    if (Random.nextFloat() <= mutationRatio) Chromosome.mutate(ch) else ch
   }
 
   /**
@@ -201,36 +196,36 @@ class Worker(mutationRatio: Double) extends Actor {
    * based on a tournament selection algorithm.
    *
    * @param population The population from which to select the parents.
-   * @return Two [[net.auxesia.Chromosome]] instances from the given 
+   * @return Two [[net.auxesia.Chromosome]] instances from the given
    * population, selected by a tournament selection algorithm.
    */
-  private def selectParents(population: Vector[Chromosome]): Vector[Chromosome] = {
-	val popSize = population.size
-	val tournamentSize = 3
-	var parents = Vector[Chromosome]()
-	
-	// Randomly select two parents via tournament selection.
-	for (i <- 0 to 1) {
-	  var candidate = population(Random.nextInt(popSize))
-	  for (j <- 1 to tournamentSize) {
-		val idx = Random.nextInt(popSize)
-		if (population(idx).fitness < candidate.fitness) {
-		  candidate = population(idx)
-		}
-	  }
-      parents = parents :+ candidate
-	}
-	parents
+  private def selectParents(population: Vector[Chromosome]) = {
+    val popSize = population.size
+    val tournamentSize = 3
+    var parents = Vector[Chromosome]()
+
+    // Randomly select two parents via tournament selection.
+    for (i <- 0 to 1) {
+      var candidate = population(Random.nextInt(popSize))
+      for (j <- 1 to tournamentSize) {
+        val idx = Random.nextInt(popSize)
+        if (population(idx).fitness < candidate.fitness) {
+          candidate = population(idx)
+        }
+      }
+      parents :+= candidate
+    }
+    parents
   }
 
   /**
    * Receive method as required by the Akka framework.
    */
-  def receive = {	
-    case Mutate(chromosome) => 
-	  self reply randomMutate(chromosome)
-	case Mate(population) => 
-	  val parents  = selectParents(population)
-	  self reply Chromosome.mate(parents(0), parents(1)).map(randomMutate)
+  def receive = {
+    case Mutate(chromosome) =>
+      self reply randomMutate(chromosome)
+    case Mate(population) =>
+      val parents = selectParents(population)
+      self reply Chromosome.mate(parents(0), parents(1)).map(randomMutate)
   }
 }

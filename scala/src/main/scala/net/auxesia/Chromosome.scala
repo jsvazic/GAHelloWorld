@@ -56,28 +56,26 @@ object Chromosome {
   def apply(gene: String) = {
     def calcFitness(gene: Array[Char]): Int = {
       gene.zip(TARGET_GENE).map(
-	      i => abs(i._1.intValue - i._2.intValue)
-	  ).foldLeft(0)(_+_)
+        i => abs(i._1.intValue - i._2.intValue)).foldLeft(0)(_ + _)
     }
 
     new Chromosome(gene, calcFitness(gene.toCharArray))
   }
 
   /**
-   * Helper method used to generate a random gene for use in constructing a 
+   * Helper method used to generate a random gene for use in constructing a
    * new [[net.auxesia.Chromosome]] instance.
-   * 
-   * @return A valid gene for use when constructing a new 
+   *
+   * @return A valid gene for use when constructing a new
    * [[net.auxesia.Chromosome]] instance.
    */
-  def generateRandom: Chromosome = {
+  def generateRandom = {
     Chromosome(new Array[Char](TARGET_GENE.length).map(
-        i => (Random.nextInt(90) + 32).toChar
-	  ).mkString)
+      i => (Random.nextInt(90) + 32).toChar).mkString)
   }
-  
+
   /**
-   * Method to mate one [[net.auxesia.Chromosome]]'s gene with another, 
+   * Method to mate one [[net.auxesia.Chromosome]]'s gene with another,
    * resulting in two distinct offspring genes that can be used to create
    * new instances of [[net.auxesia.Chromosome]]'s as required.
    *
@@ -87,14 +85,13 @@ object Chromosome {
    * @return A 2-element vector of resuling [[net.auxesia.Chromosome]]
    * genes created through the mating algorithm.
    */
-  def mate(first: Chromosome, second: Chromosome): Vector[Chromosome] = {
+  def mate(first: Chromosome, second: Chromosome) = {
     val pivot = Random.nextInt(first.gene.length)
     Vector[Chromosome](
-	    Chromosome(first.gene.substring(0, pivot) + second.gene.substring(pivot)),
-        Chromosome(second.gene.substring(0, pivot) + first.gene.substring(pivot))
-    )
+      Chromosome(first.gene.substring(0, pivot) + second.gene.substring(pivot)),
+      Chromosome(second.gene.substring(0, pivot) + first.gene.substring(pivot)))
   }
-  
+
   /**
    * Method used to mutate the gene of the given chromosome, returning a
    * new [[net.auxesia.Chromsome]] instance.  Only one character in the
@@ -102,10 +99,10 @@ object Chromosome {
    *
    * @param ch The [[net.auxesia.Chromosome]] to mutate.
    *
-   * @return A new [[net.auxesia.Chromosome]], with its gene having a one 
+   * @return A new [[net.auxesia.Chromosome]], with its gene having a one
    * character delta compared to the given [[net.auxesia.Chromosome]]'s gene.
    */
-  def mutate(ch: Chromosome): Chromosome = {
+  def mutate(ch: Chromosome) = {
     var arr = ch.gene.toArray
     arr(Random.nextInt(ch.gene.length)) = (Random.nextInt(90) + 32).toChar
     Chromosome(arr.mkString)

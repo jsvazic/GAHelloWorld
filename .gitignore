@@ -1,6 +1,7 @@
 .classpath
 .project
 .settings
+.cache
 .scala_dependencies
 .metadata/
 bin/

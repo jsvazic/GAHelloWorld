@@ -25,54 +25,48 @@ package net.auxesia
 
 /**
  * Object driver for the genetic algorithm "Hello, world!" simulation.
- * 
+ *
  * @author John Svazic
  */
-object GAHelloWorld {
+object GAHelloWorld extends App {
 
-  /**
-   * Main driver function for the simulation.
-   * 
-   * @param args Command-line arguments (ignored).
-   */
-  def main(args: Array[String]): Unit = {
-	val startTime = System.currentTimeMillis
-    // The size of the simulation population
-    val populationSize = 2048
+  val startTime = System.currentTimeMillis
 
-    // The maximum number of generations for the simulation.
-    val maxGenerations = 16384
+  // The size of the simulation population
+  val populationSize = 2048
 
-    // The probability of crossover for any member of the population,
-    // where 0.0 <= crossoverRatio <= 1.0
-    val crossoverRatio = 0.8f
+  // The maximum number of generations for the simulation.
+  val maxGenerations = 16384
 
-    // The portion of the population that will be retained without change
-    // between evolutions, where 0.0 <= elitismRatio < 1.0
-    val elitismRatio = 0.1f
+  // The probability of crossover for any member of the population,
+  // where 0.0 <= crossoverRatio <= 1.0
+  val crossoverRatio = 0.8f
 
-    // The probability of mutation for any member of the population,
-    // where 0.0 <= mutationRatio <= 1.0
-    val mutationRatio = 0.03f
+  // The portion of the population that will be retained without change
+  // between evolutions, where 0.0 <= elitismRatio < 1.0
+  val elitismRatio = 0.1f
 
-    // Create the initial population
-    val pop = Population(populationSize, crossoverRatio, elitismRatio, mutationRatio)
+  // The probability of mutation for any member of the population,
+  // where 0.0 <= mutationRatio <= 1.0
+  val mutationRatio = 0.03f
 
-    // Start evolving the population, stopping when the maximum number of
-    // generations is reached, or when we find a solution.
+  // Create the initial population
+  val pop = Population(populationSize, crossoverRatio, elitismRatio, mutationRatio)
 
-    var generation = 1;
-    while (generation <= maxGenerations && pop.population(0).fitness != 0) {
-      println("Generation " + generation + ": " + pop.population(0).gene)
-      pop.evolve
-      generation += 1
-    }
-	
-	// We're done, so shutdown the population (which uses Akka)
-	pop.shutdown
-    val endTime = System.currentTimeMillis
-    
+  // Start evolving the population, stopping when the maximum number of
+  // generations is reached, or when we find a solution.
+
+  var generation = 1
+  while (generation <= maxGenerations && pop.population(0).fitness != 0) {
     println("Generation " + generation + ": " + pop.population(0).gene)
-    println("Total execution time: " + (endTime - startTime) + "ms")
+    pop.evolve
+    generation += 1
   }
+
+  // We're done, so shutdown the population (which uses Akka)
+  pop.shutdown
+  val endTime = System.currentTimeMillis
+
+  println("Generation " + generation + ": " + pop.population(0).gene)
+  println("Total execution time: " + (endTime - startTime) + "ms")
 }
