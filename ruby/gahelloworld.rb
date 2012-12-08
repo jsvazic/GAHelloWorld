@@ -42,7 +42,7 @@ module GAHelloWorld
       #create two new chromosomes and return them. 
       # chrom1 gets the first half from itself and the second from the partner
       # chrom2 gets the first half from the partner and the second from itself
-      pivot = rand( gene_ary.size -1 )
+      pivot = rand( gene_ary.size() - 1 )
       ng1= gene_ary[0..pivot] + partner.gene_ary[pivot+1..gene_ary.size]
       ng2= partner.gene_ary[0..pivot] + gene_ary[pivot+1..gene_ary.size]
       ng1 = ng1.map do |i| i.chr end.join 
@@ -61,7 +61,8 @@ module GAHelloWorld
 
   class Population
     attr_accessor :population
-    
+    Tourney_size = 3
+
     def each(&block)
       @population.each do |i| 
         block.call(i)
@@ -84,7 +85,7 @@ module GAHelloWorld
 
     def tournament_selection
       best = @population[rand(@population.size)]
-      tournament_selection.times do |i|
+      Tourney_size.times do |i|
         cont = @population[rand(@population.size)]
         best = cont if cont.fitness < best.fitness
       end 
@@ -92,21 +93,36 @@ module GAHelloWorld
     end 
 
     def evolve
-      sub_pop=@population[0..(@elitism*@population.size).to_i]
-      sub_pop.each do |chrom|
+      inspect
+      elitism_mark=(@elitism*@population.size).to_i - 1
+      buf = []
+      sub_pop=@population[0..elitism_mark]
+      sub_pop.each_with_index do |chrom, ind|
         if rand <= @crossover
           parent1=tournament_selection
           parent2=tournament_selection
           children = parent1.mate parent2
-          children.first = children.first.mutate if rand < @mutation
-          children.last = children.last.mutate if rand < @mutation
+          children[0] = children.first.mutate if rand < @mutation
+          children[1] = children.last.mutate if rand < @mutation
+          buf += children
         else
-          sub_pop = sub_pop.mutate if rand < @mutation
+          chrom = chrom.mutate if rand < @mutation
+          buf << chrom
         end       
       end  
-      sub_pop.sort!{|a,b| a.fitness <=> b.fitness}     
-    end 
+      @population = (buf+@population[elitism_mark+1...@size]).sort!{|a,b| a.fitness <=> b.fitness}     
+      inspect
+    end
+
+    def inspect
+      ind ||= -1 
+      @population[0,25].each do |chrome|
+        ind += 1  
+        puts "[" + ind.to_s + "] "+chrome.gene + ": fitness => " + chrome.fitness.to_s
+      end
+    end
   end 
+
 end 
 
 max_generations = 16384
@@ -114,15 +130,16 @@ pop = GAHelloWorld::Population.new(size=2048, crossover=0.8, elitism=0.1, mutati
   curgen = 1
   begin
     finished=false
-    # print("Generation #{curgen}: #{pop.first.gene}" 
-
+    puts("Generation #{curgen}: #{pop.population[0].gene}. Fitness: #{pop.population[0].fitness}" )
+    if pop.population[0].fitness == 0
+      puts "Finished-- generation: #{curgen}, gene: #{pop.population.first.gene}. " 
+    else
+      pop.evolve  
+    end  
     curgen += 1
+    puts "Reached max generation (#{max_generations}). Current best: #{pop.population.first.gene}" if curgen > max_generations
   end while curgen <= 16384 && !finished
 
-  # puts pop.population.inspect
-  
-  ind ||= -1 
-  pop.each do |chrome|
-    ind += 1  
-    puts "[" + ind.to_s + "] "+chrome.gene + ": fitness => " + chrome.fitness.to_s
-  end
+
+# pop.inspect
+
