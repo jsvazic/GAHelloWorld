@@ -116,7 +116,7 @@ module GAHelloWorld
 
     def inspect
       ind ||= -1 
-      @population[0,25].each do |chrome|
+      @population[0,5].each do |chrome|
         ind += 1  
         puts "[" + ind.to_s + "] "+chrome.gene + ": fitness => " + chrome.fitness.to_s
       end
@@ -140,6 +140,18 @@ pop = GAHelloWorld::Population.new(size=2048, crossover=0.8, elitism=0.1, mutati
     puts "Reached max generation (#{max_generations}). Current best: #{pop.population.first.gene}" if curgen > max_generations
   end while curgen <= 16384 && !finished
 
+# tests
+# 100.times do |i|
+#   @test_chrom  = (GAHelloWorld::Chromosome.gen_random)
+#   @test_chrom2  = (GAHelloWorld::Chromosome.gen_random)
+#   puts  @test_chrom.gene.inspect
+#   @test_chrom = @test_chrom.mutate
+#   puts  @test_chrom.gene.inspect
+#   kid=@test_chrom.mate(@test_chrom2)
+#   puts  @test_chrom2.gene.inspect
+#   puts kid.first.gene
+#   puts kid.last.gene
+# end
 
 # pop.inspect
 
