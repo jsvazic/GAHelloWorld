@@ -1,5 +1,6 @@
+
 module GAHelloWorld
-  RAND_SEED=Time.now.to_f
+  RAND_SEED=srand
   TARGET_GENE='Hello World!'
   ALLOWED_LETTERS = (32.chr..122.chr).to_a
 
@@ -22,8 +23,8 @@ module GAHelloWorld
       end
     end
 
-    def initialize(str)
-      @gene=str
+    def initialize(str='')
+      @gene=str == '' ? Chromosome.gen_random.gene : str
       @gene_ary ||= Chromosome.to_int_array(@gene)
       @target_ary ||= Chromosome.to_int_array(TARGET_GENE)
     end 
@@ -43,10 +44,16 @@ module GAHelloWorld
       # chrom1 gets the first half from itself and the second from the partner
       # chrom2 gets the first half from the partner and the second from itself
       pivot = rand( gene_ary.size() - 1 )
-      ng1= gene_ary[0..pivot] + partner.gene_ary[pivot+1..gene_ary.size]
-      ng2= partner.gene_ary[0..pivot] + gene_ary[pivot+1..gene_ary.size]
-      ng1 = ng1.map do |i| i.chr end.join 
-      ng2 = ng2.map do |i| i.chr end.join
+      ng1= gene[0..pivot] + partner.gene[pivot+1..-1]
+      ng2= partner.gene[0..pivot] + gene[pivot+1..-1]
+      # if RUBY_VERSION.include?("1.8")
+      #   ng1 = ng1.map do |i| i.chr end.join 
+      #   ng2 = ng2.map do |i| i.chr end.join
+      # else
+      #   ng1 = ng1.map do |i| i.chr end.join 
+      #   ng2 = ng2.map do |i| i.chr end.join
+      # end 
+puts "new chrome: " + ng1.to_s
       [ Chromosome.new(ng1) , Chromosome.new(ng2) ]
     end 
 
@@ -69,9 +76,10 @@ module GAHelloWorld
       end
     end 
 
-    def initialize(size=1024, crossover=0.8, elitism=0.1, mutation=0.03)
+    def initialize(size, crossover, elitism, mutation, seed)
       @@tournamentSize = 3
       @size = size
+      @seed = seed
       @crossover=crossover
       @elitism=elitism
       @mutation=mutation
@@ -79,7 +87,8 @@ module GAHelloWorld
       @size.times do |i|
         buf << Chromosome::gen_random()
       end 
-      srand RAND_SEED
+      puts @seed.to_s
+      srand @seed
       @population = buf.sort!{ |a,b| a.fitness <=> b.fitness }
     end 
 
@@ -93,25 +102,26 @@ module GAHelloWorld
     end 
 
     def evolve
-      inspect
+      # inspect
       elitism_mark=(@elitism*@population.size).to_i - 1
-      buf = []
-      sub_pop=@population[0..elitism_mark]
+      buf = @population[0..elitism_mark]
+      sub_pop=@population[elitism_mark+1..-1]
       sub_pop.each_with_index do |chrom, ind|
         if rand <= @crossover
           parent1=tournament_selection
           parent2=tournament_selection
           children = parent1.mate parent2
-          children[0] = children.first.mutate if rand < @mutation
-          children[1] = children.last.mutate if rand < @mutation
+          children[0] = children[0].mutate if rand < @mutation
+          children[1] = children[1].mutate if rand < @mutation
           buf += children
         else
           chrom = chrom.mutate if rand < @mutation
           buf << chrom
         end       
+        break if buf.size >= @size
       end  
       @population = (buf+@population[elitism_mark+1...@size]).sort!{|a,b| a.fitness <=> b.fitness}     
-      inspect
+      # inspect
     end
 
     def inspect
@@ -124,15 +134,49 @@ module GAHelloWorld
   end 
 
 end 
+# puts ARGV.inspect
+if ARGV.empty? || ARGV.include?("-h") ||  ARGV.include?("--help")
+  puts "Genetic Algorithm Hello World. Ruby version by David Heitzman, 2012"
+  puts "usage: ruby gahelloworld" 
+  puts "  --help" 
+  puts "  --size=<number>       population size"
+  puts "  --crossover=<float>   portion each generation subject to replacement by new combination of two parents" 
+  puts "  --mutation=<number>   chance that a newly crossed over child will mutate" 
+  puts "  --elitism=<float>     portion each generation that will be preserved"
+  puts "  --seed=<number>       random number seed"
+end  
+size = ARGV.find{|i| i.include?("--size") }
+size = size.split("=")[1].to_i if size
+size ||= 2048
 
+crossover = ARGV.find{|i| i.include?("--crossover") }
+crossover = crossover.split("=")[1].to_f if crossover
+crossover ||= 0.8
+
+mutation = ARGV.find{|i| i.include?("--mutation") }
+mutation = mutation.split("=")[1].to_f if mutation
+mutation ||= 0.3
+
+elitism = ARGV.find{|i| i.include?("--elitism") }
+elitism = elitism.split("=")[1].to_f if elitism
+elitism ||= 0.1
+
+seed = ARGV.find{|i| i.include?("--seed") }
+seed = seed.split("=")[1].to_i if seed
+seed ||= GAHelloWorld::RAND_SEED
+
+puts "GAHellowWorld Ruby edition by David Heitzman"
+puts "target string: #{GAHelloWorld::TARGET_GENE} " 
+puts "size:#{size} crossover:#{crossover} mutation:#{mutation} elitism:#{elitism} seed:#{seed}"
 max_generations = 16384
-pop = GAHelloWorld::Population.new(size=2048, crossover=0.8, elitism=0.1, mutation=0.3)
+pop = GAHelloWorld::Population.new(size, crossover, elitism, mutation, seed)
   curgen = 1
   begin
     finished=false
     puts("Generation #{curgen}: #{pop.population[0].gene}. Fitness: #{pop.population[0].fitness}" )
     if pop.population[0].fitness == 0
       puts "Finished-- generation: #{curgen}, gene: #{pop.population.first.gene}. " 
+      finished=true
     else
       pop.evolve  
     end  
