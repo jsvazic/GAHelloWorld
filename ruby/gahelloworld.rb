@@ -2,7 +2,7 @@
 module GAHelloWorld
   RAND_SEED=srand
   TARGET_GENE='Hello World!'
-  ALLOWED_LETTERS = (32.chr..122.chr).to_a
+  ALLOWED_LETTERS = (32..122).to_a.map{|i| i.chr}
 
   class Chromosome
     attr_reader :gene_ary, :target_ary, :gene
@@ -11,10 +11,11 @@ module GAHelloWorld
       def gen_random()
         str=''
         TARGET_GENE.size.times do |i|
-          str << ALLOWED_LETTERS[rand(ALLOWED_LETTERS.size)]
+          str << ALLOWED_LETTERS[rand(ALLOWED_LETTERS.size)-1]
         end
         Chromosome.new(str)
       end 
+
       def to_int_array(str)
         #convenience method to get an array of strings for any string, compatible with ruby 1.9.3 and 1.8.7
         out=[]
@@ -46,14 +47,6 @@ module GAHelloWorld
       pivot = rand( gene_ary.size() - 1 )
       ng1= gene[0..pivot] + partner.gene[pivot+1..-1]
       ng2= partner.gene[0..pivot] + gene[pivot+1..-1]
-      # if RUBY_VERSION.include?("1.8")
-      #   ng1 = ng1.map do |i| i.chr end.join 
-      #   ng2 = ng2.map do |i| i.chr end.join
-      # else
-      #   ng1 = ng1.map do |i| i.chr end.join 
-      #   ng2 = ng2.map do |i| i.chr end.join
-      # end 
-puts "new chrome: " + ng1.to_s
       [ Chromosome.new(ng1) , Chromosome.new(ng2) ]
     end 
 
