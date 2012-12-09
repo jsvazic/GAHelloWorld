@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'lib/gahelloworld'
+require './lib/gahelloworld'
 if ARGV.empty? || ARGV.include?("-h") ||  ARGV.include?("--help")
   puts "Genetic Algorithm Hello World. Ruby version by David Heitzman, 2012"
   puts "usage: ruby gahelloworld" 
