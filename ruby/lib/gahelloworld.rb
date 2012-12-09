@@ -24,6 +24,8 @@ module GAHelloWorld
   RAND_SEED=srand
   TARGET_GENE='Hello World!'
   ALLOWED_LETTERS = (32..122).to_a.map{|i| i.chr}
+  LETTERS=("A".ord .. "Z".ord).to_a.map{|i| i.chr} + ("a".ord .. "z".ord).to_a.map{|i| i.chr} 
+  NUMBERS=("0".ord .. "9".ord).to_a.map{|i| i.chr} 
 
   class Chromosome
     attr_reader :gene_ary, :target_ary, :gene
@@ -55,9 +57,24 @@ module GAHelloWorld
       @fitness ||= 
         begin
           #normal -- matches the target string
+          # diff=0
+          # gene_ary.size.times do |i| diff += (gene_ary[i].to_i - target_ary[i].to_i).abs  end
+          # diff
+
+          # wants strings that match letter/number W9F3c2 etc 
           diff=0
-          gene_ary.size.times do |i| diff += (gene_ary[i].to_i - target_ary[i].to_i).abs  end
-          diff
+          @gene.each_char do |c|
+            should_be = (should_be.nil? || should_be == :letter) ? :number : :letter #vacillates
+            it_is =
+            if LETTERS.include?(c)
+              :letter
+            elsif NUMBERS.include?(c)
+              :number
+            else
+              :other
+            end
+            diff += 1 if should_be != it_is
+          end 
         end
     end 
 
