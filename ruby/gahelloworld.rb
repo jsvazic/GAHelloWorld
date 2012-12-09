@@ -44,7 +44,7 @@ module GAHelloWorld
       #create two new chromosomes and return them. 
       # chrom1 gets the first half from itself and the second from the partner
       # chrom2 gets the first half from the partner and the second from itself
-      pivot = rand( gene_ary.size() - 1 )
+      pivot = rand( gene_ary.size() - 1) 
       ng1= gene[0..pivot] + partner.gene[pivot+1..-1]
       ng2= partner.gene[0..pivot] + gene[pivot+1..-1]
       [ Chromosome.new(ng1) , Chromosome.new(ng2) ]
@@ -70,9 +70,9 @@ module GAHelloWorld
     end 
 
     def initialize(size, crossover, elitism, mutation, seed)
-      @@tournamentSize = 3
       @size = size
       @seed = seed
+      srand @seed
       @crossover=crossover
       @elitism=elitism
       @mutation=mutation
@@ -80,8 +80,7 @@ module GAHelloWorld
       @size.times do |i|
         buf << Chromosome::gen_random()
       end 
-      puts @seed.to_s
-      srand @seed
+      # puts @seed.to_s
       @population = buf.sort!{ |a,b| a.fitness <=> b.fitness }
     end 
 
