@@ -27,11 +27,11 @@ genetic algorithms.
 @author: John Svazic
 """
 
-from random import (random, randint)
+from random import (choice, random, randint)
 
 __all__ = ['Chromosome', 'Population']
 
-class Chromosome(object):
+class Chromosome:
     """
     This class is used to define a chromosome for the gentic algorithm 
     simulation.  
@@ -57,8 +57,8 @@ class Chromosome(object):
         resulting in a new chromosome being returned.
         """
         pivot = randint(0, len(self.gene) - 1)
-        gene1 = self.gene[0:pivot] + mate.gene[pivot:]
-        gene2 = mate.gene[0:pivot] + self.gene[pivot:]
+        gene1 = self.gene[:pivot] + mate.gene[pivot:]
+        gene2 = mate.gene[:pivot] + self.gene[pivot:]
         
         return Chromosome(gene1), Chromosome(gene2)
     
@@ -69,7 +69,7 @@ class Chromosome(object):
         will be created, but this original will not be affected.
         """
         gene = list(self.gene)
-        delta = randint(0, 89) + 32
+        delta = randint(32, 121)
         idx = randint(0, len(gene) - 1)
         gene[idx] = chr((ord(gene[idx]) + delta) % 122)
         
@@ -95,11 +95,11 @@ class Chromosome(object):
         """
         gene = []
         for x in range(len(Chromosome._target_gene)):
-            gene.append(chr(randint(0, 89) + 32))
+            gene.append(chr(randint(32, 121)))
                 
         return Chromosome(''.join(gene))
         
-class Population(object):
+class Population:
     """
     A class representing a population for a genetic algorithm simulation.
     
@@ -128,9 +128,9 @@ class Population(object):
         A helper method used to select a random chromosome from the 
         population using a tournament selection algorithm.
         """
-        best = self.population[randint(0, len(self.population) - 1)]
+        best = choice(self.population)
         for i in range(Population._tournamentSize):
-            cont = self.population[randint(0, len(self.population) - 1)]
+            cont = choice(self.population)
             if (cont.fitness < best.fitness): best = cont
                     
         return best
@@ -149,7 +149,7 @@ class Population(object):
         """
         size = len(self.population)
         idx = int(round(size * self.elitism))
-        buf = self.population[0:idx]
+        buf = self.population[:idx]
         
         while (idx < size):
             if random() <= self.crossover:
@@ -168,7 +168,7 @@ class Population(object):
                     buf.append(self.population[idx])
                 idx += 1
         
-        self.population = list(sorted(buf[0:size], key=lambda x: x.fitness))
+        self.population = list(sorted(buf[:size], key=lambda x: x.fitness))
 
 if __name__ == "__main__":
 	maxGenerations = 16384
