@@ -41,7 +41,7 @@ rndstr(char* map, size_t strsize)
 	int i;
 
 	for (i = 0; i < strsize; i++) {
-		*(result+i) = randchar();
+		*(result+i) = rndchr(map);
 	};
 
 	return result;
