@@ -116,25 +116,16 @@ run_tests(void)
 int main(int argc, char **argv)
 {
 	int i = 0;
-
-	srand((unsigned)time(NULL));
-	target = EXAMPLE;
+	int bestfit = RAND_MAX;
 
 	run_tests();
 
-	if (argc == 2) {
-		target = argv[1];
-	}
-
-	int bestfit = RAND_MAX;
-
-	size_t pop_sz = POP_SZ;
+	srand((unsigned)time(NULL));
+	target = (argc == 2) ? argv[1] : EXAMPLE;
 	el_sz = strlen(target);
-	total_sz = pop_sz * el_sz;
-
+	total_sz = POP_SZ * el_sz;
 	char *p = rndstr(CHARMAP, total_sz);
 
- 
 	while (bestfit) {
 		qsort(p, total_sz/el_sz, el_sz, fit_cmp);
 		i += 1;
