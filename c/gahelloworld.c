@@ -127,7 +127,7 @@ int main(int argc, char **argv)
 	char *p = rndstr(CHARMAP, total_sz);
 
 	while (bestfit) {
-		qsort(p, total_sz/el_sz, el_sz, fit_cmp);
+		qsort(p, POP_SZ, el_sz, fit_cmp);
 		i += 1;
 
 		if (bestfit != fitness(p, target, el_sz)) {
