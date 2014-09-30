@@ -10,6 +10,7 @@
 #define POP_SZ 2048
 #define ELITE_RATE 0.1
 #define MUTATION_RATE 0.25
+#define TOURN_SZ 3
 #define EXAMPLE "Hello, world!"
 #define CHARMAP "abcdefghijklmnopqrstuvwxyz"\
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"\
@@ -61,10 +62,16 @@ fitness(char* str, char* gauge, size_t n)
 }
 
 static int
+_fitness(char* str)
+{
+	return fitness(str, target, el_sz);
+}
+
+static int
 fit_cmp(const void *el1, const void *el2)
 {
-	int a = fitness((char*)el1, target, el_sz);
-	int b = fitness((char*)el2, target, el_sz);
+	int a = _fitness((char*)el1);
+	int b = _fitness((char*)el2);
 
 	if (a > b) return 1;
 	if (a < b) return -1;
@@ -78,20 +85,54 @@ mutate(char *p)
 }
 
 static char*
+rnd_el(char *p)
+{
+	return p + el_sz * (int)(RANDBETWEEN(0, POP_SZ));
+}
+
+static char*
+trnmnt(char *p)
+{
+	size_t i;
+	char* winner = rnd_el(p);
+	char* challenger;
+	int f1 = _fitness(winner);
+	int f2;
+
+	for (i = TOURN_SZ; i > 0; i--) {
+		challenger = rnd_el(p);
+		f2 = _fitness(challenger);
+		if (f2 < f1) {
+			f1 = f2;
+			winner = challenger;
+		}
+	}
+
+	return winner;
+}
+
+static char*
 mate(char *p)
 {
 	char *buffer = malloc(total_sz);
-	size_t i, i1, i2;
-	size_t skip = ELITE_RATE * POP_SZ * el_sz;
-
+	char *a, *b;
+	size_t i, pivot;
+	size_t skip = (size_t)(ELITE_RATE * POP_SZ) * el_sz;
 	memcpy(buffer, p, total_sz);
 
 	for (i = skip; i <= total_sz-el_sz; i += el_sz) {
-		i1 = el_sz * RANDBETWEEN(0, POP_SZ/2);
-		i2 = el_sz * RANDBETWEEN(0, POP_SZ/2);
+		a = trnmnt(p);
+		b = trnmnt(p);
+		pivot = RANDBETWEEN(0, el_sz);
 
-		strncpy(buffer + i, p + i1, el_sz);
-		strncpy(buffer + i, p + i2, RANDBETWEEN(0, el_sz));
+		strncpy(buffer + i, a, el_sz);
+		strncpy(buffer + i, b, pivot);
+
+		if (i < total_sz - el_sz) {
+			i += el_sz;
+			strncpy(buffer + i, b, el_sz);
+			strncpy(buffer + i, a, pivot);
+		}
 
 		if (rand() < MUTATION_RATE * RAND_MAX) {
 			mutate(buffer + i);
@@ -130,8 +171,8 @@ int main(int argc, char **argv)
 		qsort(p, POP_SZ, el_sz, fit_cmp);
 		i += 1;
 
-		if (bestfit != fitness(p, target, el_sz)) {
-			bestfit = fitness(p, target, el_sz);
+		if (bestfit != _fitness(p)) {
+			bestfit = _fitness(p);
 			printf("[%03d] Best: (%04d)\t%.*s\n", i,
 				bestfit, (int)el_sz, p);
 		}
