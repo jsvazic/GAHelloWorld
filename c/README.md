@@ -14,10 +14,10 @@ of random strings.
 The project is completely self contained. To execute the application, run
 the following command from a shell:
 
-> gcc -O2 gahelloworld.c -o gahelloworld
-> ./gahelloworld [text]
-
-This example works well in most cases, but you can crash it if you want.
+```sh
+gcc -O2 gahelloworld.c -o gahelloworld
+./gahelloworld [text]
+```
 
 ## Copyright and License
 
