@@ -38,7 +38,7 @@ static char*
 rndstr(char* map, size_t strsize)
 {
 	char *result = malloc(strsize);
-	int i;
+	size_t i;
 
 	for (i = 0; i < strsize; i++) {
 		*(result+i) = rndchr(map);
