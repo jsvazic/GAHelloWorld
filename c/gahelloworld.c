@@ -111,10 +111,9 @@ trnmnt(char *p)
 	return winner;
 }
 
-static char*
-mate(char *p)
+static void
+mate(char *p, char *buffer)
 {
-	char *buffer = malloc(total_sz);
 	char *a, *b;
 	size_t i, pivot;
 	size_t skip = (size_t)(ELITE_RATE * POP_SZ) * el_sz;
@@ -139,9 +138,7 @@ mate(char *p)
 		}
 	}
 
-	free(p);
-
-	return buffer;
+	memcpy(p, buffer, total_sz);
 }
 
 static void
@@ -166,6 +163,7 @@ int main(int argc, char **argv)
 	el_sz = strlen(target);
 	total_sz = POP_SZ * el_sz;
 	char *p = rndstr(CHARMAP, total_sz);
+	char *b = malloc(total_sz);
 
 	while (bestfit) {
 		qsort(p, POP_SZ, el_sz, fit_cmp);
@@ -177,7 +175,11 @@ int main(int argc, char **argv)
 				bestfit, (int)el_sz, p);
 		}
 
-		p = mate(p);
+		mate(p, b);
 	}
+
+	free(p);
+	free(b);
+
 	return 0;
 }
