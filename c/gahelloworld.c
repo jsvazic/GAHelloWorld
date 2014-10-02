@@ -7,6 +7,8 @@
 #include <time.h>
 #include <unistd.h>
 
+#define O_SPARTA 0x01
+
 #define CHARMAP "abcdefghijklmnopqrstuvwxyz"\
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"\
 		"0123456789"\
@@ -18,6 +20,7 @@
 static char* target = "Hello, world!";
 static size_t el_sz;
 static size_t total_sz;
+static char options = 0;
 static unsigned int pop_size = 2048;
 static unsigned int challengers = 3;
 static float elitism = .1;
@@ -87,7 +90,13 @@ mutate(char *p)
 static char*
 rnd_el(char *p)
 {
-	return p + el_sz * (int)(RANDBETWEEN(0, pop_size));
+	unsigned int top = pop_size;
+
+	if ((options & O_SPARTA) == O_SPARTA) {
+		top = pop_size * elitism;
+	}
+
+	return p + el_sz * (int)(RANDBETWEEN(0, top));
 }
 
 static char*
@@ -155,14 +164,25 @@ run_tests(void)
 static void
 print_usage(char *self)
 {
-	printf("Usage: %s [-t] [-h] [-p SIZE] [-c COUNT] [-e RATIO] [-m RATIO] [-i STRING]\n", self);
+	printf("Usage: %s [-t] [-s] [-h] [-p SIZE] [-c COUNT] [-e RATIO] [-m RATIO] [-i STRING]\n", self);
 	printf("	-t:		run tests\n");
+	printf("	-s:		Sparta! mode (Only elite can mate)\n");
 	printf("	-h:		Show this help\n");
 	printf("	-p SIZE:	Population size\n");
 	printf("	-c COUNT:	Challengers count for mate tournament\n");
 	printf("	-e RATIO:	Elitism ratio\n");
 	printf("	-m RATIO:	Mutation ratio\n");
 	printf("	-i STRING:	search this instead of \"Hello, World!\"\n");
+}
+
+static void
+check_params()
+{
+	if ((options & O_SPARTA) == O_SPARTA
+		&& ((int)(pop_size * elitism) == 0)) {
+		printf("You have not enough spartans.\n");
+		exit(1);
+	}
 }
 
 int main(int argc, char **argv)
@@ -172,10 +192,13 @@ int main(int argc, char **argv)
 	int opt;
 	srand((unsigned int)time(NULL));
 
-	while((opt = getopt(argc, argv, "thi:p:e:m:c:")) != -1) {
+	while((opt = getopt(argc, argv, "tshi:p:e:m:c:")) != -1) {
 		switch (opt) {
 		case 't':
 			run_tests();
+			break;
+		case 's':
+			options |= O_SPARTA;
 			break;
 		case 'i':
 			target = optarg;
@@ -198,6 +221,8 @@ int main(int argc, char **argv)
 			exit(1);
 		}
 	}
+
+	check_params();
 
 	el_sz = strlen(target);
 	total_sz = pop_size * el_sz;
