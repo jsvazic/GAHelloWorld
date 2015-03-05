@@ -17,6 +17,7 @@ target  = 'Hello, world!';
 popSize = 1000;                                 % Population Size (100-10000 generally produce good results)
 genome  = length(target);                       % Genome Size
 mutRate = .01;                                  % Mutation Rate (5%-25% produce good results)
+count = 1;                                      % Used for plotting purposes
 S       = 4;                                    % Tournament Size (2-6 produce good results)
 best    = Inf;                                  % Initialize Best (arbitrarily large)
 MaxVal  = max(double(target));                  % Max Integer Value Needed
@@ -28,8 +29,12 @@ selection = 0;                                  % 0: Tournament
 crossover = 1;                                  % 0: Uniform crossover
                                                 % 1: 1 point crossover
                                                 % 2: 2 point crossover
+plotting = 1;                                   % 0: no graph
+                                                % 1: plot fitness/gen
 %% Initialize Population
 Pop = round(rand(popSize,genome)*(MaxVal-1)+1); % Creates Population With Corrected Genome Length
+
+initF = min(sum(abs(bsxfun(@minus,Pop,ideal)),2));   % Initial fitness for plotting
 
 for Gen = 1:1e6                                 % A Very Large Number Was Chosen, But Shouldn't Be Needed
     
@@ -50,8 +55,17 @@ for Gen = 1:1e6                                 % A Very Large Number Was Chosen
     
     % Stores New Best Values and Prints New Best Scores
     if current < best
-        best = current;
-        bestGenome = Pop(currentGenome,:); % Uses that index to find best value
+        best = current;                     % Makes new best
+        bestGenome = Pop(currentGenome,:);  % Uses that index to find best value
+    
+        % Very Ugly Plotting Implementation -- Needs to be Cleaned up Badly
+  %*********************************************************************************************
+        if plotting == 1
+        B(count) = best;                    % Stores all best values for plotting
+        G(count) = Gen;                     % Stores all gen values for plotting
+        count = count + 1;                  % Increments number of best found
+        end
+  %*********************************************************************************************      
         
         fprintf('Gen: %d  |  Fitness: %d  |  ',Gen, best);  % Formatted printing of generation and fitness
         disp(char(bestGenome));                             % Best genome so far
@@ -110,3 +124,16 @@ for Gen = 1:1e6                                 % A Very Large Number Was Chosen
 end
 
 toc % Ends timer and prints elapsed time
+
+% Graphs Fitness Curve if Plotting is Turned On
+if plotting == 1
+% Plot Best Values/Gen
+figure(1)
+plot(G(:),B(:), '-r')
+axis([0 Gen 0 initF])
+title('Fitness Over Time');
+xlabel('Fitness');
+ylabel('Generation');                  
+end
+
+
