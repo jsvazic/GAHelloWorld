@@ -50,7 +50,7 @@
   [c]
   (let [old-gene (:gene c)
 	    idx (rand-int (count old-gene))
-	    new-gene (assoc old-gene idx (char (mod (+ (int (get old-gene idx)) (+ 32 (rand-int 90))) 122)))]
+	    new-gene (assoc old-gene idx (char (mod (+ (int (get old-gene idx)) (+ 32 (rand-int 90))) 123)))]
     (Chromosome. new-gene (fitness new-gene))))
 
 (defn generate
