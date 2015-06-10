@@ -23,7 +23,7 @@
 module GAHelloWorld
   RAND_SEED=srand
   TARGET_GENE='Hello World!'
-  ALLOWED_LETTERS = (32..122).to_a.map{|i| i.chr}
+  ALLOWED_LETTERS = (32..123).to_a.map{|i| i.chr}
 
   class Chromosome
     attr_reader :gene_ary, :target_ary, :gene

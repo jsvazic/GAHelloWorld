@@ -71,7 +71,7 @@ class Chromosome:
         gene = list(self.gene)
         delta = randint(32, 121)
         idx = randint(0, len(gene) - 1)
-        gene[idx] = chr((ord(gene[idx]) + delta) % 122)
+        gene[idx] = chr((ord(gene[idx]) + delta) % 123)
         
         return Chromosome(''.join(gene))
 

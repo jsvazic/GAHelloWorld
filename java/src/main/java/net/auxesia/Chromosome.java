@@ -113,7 +113,7 @@ public class Chromosome implements Comparable<Chromosome> {
 		char[] arr  = gene.toCharArray();
 		int idx     = rand.nextInt(arr.length);
 		int delta   = (rand.nextInt() % 90) + 32;
-		arr[idx]    = (char) ((arr[idx] + delta) % 122);
+		arr[idx]    = (char) ((arr[idx] + delta) % 123);
 
 		return new Chromosome(String.valueOf(arr));
 	}

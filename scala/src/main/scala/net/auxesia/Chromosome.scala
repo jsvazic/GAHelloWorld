@@ -104,7 +104,7 @@ object Chromosome {
    */
   def mutate(ch: Chromosome) = {
     var arr = ch.gene.toArray
-    arr(Random.nextInt(ch.gene.length)) = (Random.nextInt(90) + 32).toChar
+    arr(Random.nextInt(ch.gene.length)) = (Random.nextInt(91) + 32).toChar
     Chromosome(arr.mkString)
   }
 }

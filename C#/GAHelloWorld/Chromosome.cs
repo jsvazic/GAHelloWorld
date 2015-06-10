@@ -83,7 +83,7 @@ namespace GAHelloWorld
             char[] mutatedGene = this.Gene.ToCharArray();
 
             int randomIndex = rand.Next(0, this.Gene.Length);
-            int mutateChange = rand.Next(32, 122);
+            int mutateChange = rand.Next(32, 123);
 
             mutatedGene[randomIndex] = (char)mutateChange;
 
