@@ -18,7 +18,7 @@ been included.
 
 I've been working with Genetic Algorithms for a little while now and I
 stubmled across a 
-[C++ implemetation](http://www.generation5.org/content/2003/gahelloworld.asp) 
+[C++ implementation](http://www.generation5.org/content/2003/gahelloworld.asp) 
 a while ago.  I decided to bring it back to life and migrate it to Java with 
 my own enhancements.  This is far from ideal code, but it was designed to be 
 a gentle introduction for newcomers to genetic algorithms.
